@@ -7,7 +7,7 @@
 ## Install
 
 ```
-$ npm install easy-fit --save
+$ npm install easy-fit
 ```
 
 ## How to use
