@@ -1,0 +1,45 @@
+# easy-fit
+
+> Parse your .FIT files easily, directly from JS.
+> Written in ES6.
+
+
+## Install
+
+```
+$ npm install easy-fit --save
+```
+
+## How to use
+
+See in [examples](./examples) folder:
+
+```
+var EasyFit = require('./../dist/easy-fit.js').default;
+var fs = require('fs');
+
+var path = './example.fit';
+
+fs.readFile(path, function (err, content) {
+  var easyFit = new EasyFit({
+    force: true,
+    speedUnit: 'km/h',
+    lengthUnit: 'km',
+    temperatureUnit: 'kelvin',
+  });
+
+  easyFit.parse(content, function (error, data) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(JSON.stringify(data));
+    }
+  });
+});
+```
+
+## License
+
+MIT license; see [LICENSE](./LICENSE).
+
+(c) 2016 by Pierre Jacquier

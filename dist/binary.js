@@ -1,0 +1,233 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.addEndian = addEndian;
+exports.readRecord = readRecord;
+exports.getArrayBuffer = getArrayBuffer;
+exports.calculateCRC = calculateCRC;
+
+var _fit = require('./fit');
+
+var _messages = require('./messages');
+
+function addEndian(littleEndian, bytes) {
+  var result = 0;
+  if (!littleEndian) bytes.reverse();
+  for (var i = 0; i < bytes.length; i++) {
+    result += bytes[i] << (i << 3) >>> 0;
+  }
+
+  return result;
+}
+
+function readData(blob, fDef, startIndex) {
+  if (fDef.endianAbility === true) {
+    var temp = [];
+    for (var i = 0; i < fDef.size; i++) {
+      temp.push(blob[startIndex + i]);
+    }
+    var uint32Rep = addEndian(fDef.littleEndian, temp);
+
+    if (fDef.dataType === 'sint32') {
+      return uint32Rep >> 0;
+    }
+
+    return uint32Rep;
+  }
+  return blob[startIndex];
+}
+
+function formatByType(data, type, scale, offset) {
+  switch (type) {
+    case 'date_time':
+      return new Date(data * 1000 + 631062000000);
+    case 'sint32':
+    case 'sint16':
+      return data * _fit.FIT.scConst;
+    case 'uint32':
+    case 'uint16':
+      return scale ? data / scale + offset : data;
+    default:
+      return data;
+  }
+}
+
+function convertTo(data, unitsList, speedUnit) {
+  var unitObj = _fit.FIT.options[unitsList][speedUnit];
+  return unitObj ? data * unitObj.multiplier + unitObj.offset : data;
+}
+
+function applyOptions(data, field, options) {
+  switch (field) {
+    case 'speed':
+    case 'enhanced_speed':
+    case 'vertical_speed':
+    case 'avg_speed':
+    case 'max_speed':
+    case 'speed_1s':
+    case 'ball_speed':
+    case 'enhanced_avg_speed':
+    case 'enhanced_max_speed':
+    case 'avg_pos_vertical_speed':
+    case 'max_pos_vertical_speed':
+    case 'avg_neg_vertical_speed':
+    case 'max_neg_vertical_speed':
+      return convertTo(data, 'speedUnits', options.speedUnit);
+    case 'distance':
+    case 'total_distance':
+    case 'enhanced_avg_altitude':
+    case 'enhanced_min_altitude':
+    case 'enhanced_max_altitude':
+    case 'enhanced_altitude':
+    case 'height':
+    case 'odometer':
+    case 'avg_stroke_distance':
+    case 'min_altitude':
+    case 'avg_altitude':
+    case 'max_altitude':
+    case 'total_ascent':
+    case 'total_descent':
+    case 'altitude':
+    case 'cycle_length':
+    case 'auto_wheelsize':
+    case 'custom_wheelsize':
+    case 'gps_accuracy':
+      return convertTo(data, 'lengthUnits', options.lengthUnit);
+    case 'temperature':
+    case 'avg_temperature':
+    case 'max_temperature':
+      return convertTo(data, 'temperatureUnits', options.temperatureUnit);
+    default:
+      return data;
+  }
+}
+
+function readRecord(blob, messageTypes, startIndex, options) {
+  var recordHeader = blob[startIndex];
+  var localMessageType = recordHeader & 15;
+
+  if ((recordHeader & 64) === 64) {
+    // is definition message
+    // startIndex + 1 is reserved
+
+    var lEnd = blob[startIndex + 2] === 0;
+    var mTypeDef = {
+      littleEndian: lEnd,
+      globalMessageNumber: addEndian(lEnd, [blob[startIndex + 3], blob[startIndex + 4]]),
+      numberOfFields: blob[startIndex + 5],
+      fieldDefs: []
+    };
+
+    var _message = (0, _messages.getFitMessage)(mTypeDef.globalMessageNumber);
+
+    for (var i = 0; i < mTypeDef.numberOfFields; i++) {
+      var fDefIndex = startIndex + 6 + i * 3;
+      var baseType = blob[fDefIndex + 2];
+
+      var _message$getAttribute = _message.getAttributes(blob[fDefIndex]);
+
+      var field = _message$getAttribute.field;
+      var type = _message$getAttribute.type;
+
+      var fDef = {
+        type: type,
+        fDefNo: blob[fDefIndex],
+        size: blob[fDefIndex + 1],
+        endianAbility: (baseType & 128) === 128,
+        littleEndian: lEnd,
+        baseTypeNo: baseType & 15,
+        name: field,
+        dataType: (0, _messages.getFitMessageBaseType)(baseType & 15)
+      };
+
+      mTypeDef.fieldDefs.push(fDef);
+    }
+    messageTypes[localMessageType] = mTypeDef;
+
+    return {
+      messageType: 'fieldDescription',
+      nextIndex: startIndex + 6 + mTypeDef.numberOfFields * 3
+    };
+  }
+
+  var messageType = void 0;
+
+  if (messageTypes[localMessageType]) {
+    messageType = messageTypes[localMessageType];
+  } else {
+    messageType = messageTypes[0];
+  }
+
+  // TODO: handle compressed header ((recordHeader & 128) == 128)
+
+  // uncompressed header
+  var messageSize = 0;
+  var readDataFromIndex = startIndex + 1;
+  var fields = {};
+  var message = (0, _messages.getFitMessage)(messageType.globalMessageNumber);
+
+  for (var _i = 0; _i < messageType.fieldDefs.length; _i++) {
+    var _fDef = messageType.fieldDefs[_i];
+    var data = readData(blob, _fDef, readDataFromIndex);
+
+    var _message$getAttribute2 = message.getAttributes(_fDef.fDefNo);
+
+    var field = _message$getAttribute2.field;
+    var type = _message$getAttribute2.type;
+    var scale = _message$getAttribute2.scale;
+    var offset = _message$getAttribute2.offset;
+
+    if (field !== 'unknown' && field !== '') {
+      fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+    }
+    readDataFromIndex += _fDef.size;
+    messageSize += _fDef.size;
+  }
+
+  var result = {
+    messageType: message.name,
+    nextIndex: startIndex + messageSize + 1,
+    message: fields
+  };
+
+  switch (messageType.globalMessageNumber) {
+    case _fit.FIT.TYPE.RECORD:
+      break;
+    case _fit.FIT.TYPE.LAP:
+      break;
+    case _fit.FIT.TYPE.SESSION:
+      break;
+    default:
+      break;
+  }
+
+  return result;
+}
+
+function getArrayBuffer(buffer) {
+  var ab = new ArrayBuffer(buffer.length);
+  var view = new Uint8Array(ab);
+  for (var i = 0; i < buffer.length; ++i) {
+    view[i] = buffer[i];
+  }
+  return ab;
+}
+
+function calculateCRC(blob, start, end) {
+  var crcTable = [0x0000, 0xCC01, 0xD801, 0x1400, 0xF001, 0x3C00, 0x2800, 0xE401, 0xA001, 0x6C00, 0x7800, 0xB401, 0x5000, 0x9C01, 0x8801, 0x4400];
+
+  var crc = 0;
+  for (var i = start; i < end; i++) {
+    var byte = blob[i];
+    var tmp = crcTable[crc & 0xF];
+    crc = crc >> 4 & 0x0FFF;
+    crc = crc ^ tmp ^ crcTable[byte & 0xF];
+    tmp = crcTable[crc & 0xF];
+    crc = crc >> 4 & 0x0FFF;
+    crc = crc ^ tmp ^ crcTable[byte >> 4 & 0xF];
+  }
+
+  return crc;
+}

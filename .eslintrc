@@ -1,0 +1,12 @@
+{
+  "parserOptions": {
+    "ecmaFeatures": {}
+  },
+  "plugins": [],
+  "extends": ["airbnb/base"],
+  "globals": {},
+  "rules": {
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+    "import/no-unresolved": [2, {}]
+  }
+}
