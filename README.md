@@ -35,7 +35,6 @@ fs.readFile(file, function (err, content) {
       console.log(error);
     } else {
       console.log(JSON.stringify(data));
-      //console.log(data.records[0]);
     }
   });
 });
