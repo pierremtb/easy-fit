@@ -90,7 +90,7 @@ function applyOptions(data, field, options) {
   }
 }
 
-export function readRecord(blob, messageTypes, startIndex, options) {
+export function readRecord(blob, messageTypes, startIndex, options, startDate) {
   const recordHeader = blob[startIndex];
   const localMessageType = (recordHeader & 15);
 
@@ -155,6 +155,10 @@ export function readRecord(blob, messageTypes, startIndex, options) {
     const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
     if (field !== 'unknown' && field !== '') {
       fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+    }
+
+    if (message.name === 'record' && options.elapsedRecordField) {
+      fields.elapsed_time = (fields.timestamp - startDate) / 1000;
     }
     readDataFromIndex += fDef.size;
     messageSize += fDef.size;

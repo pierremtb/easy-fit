@@ -20,7 +20,9 @@ var EasyFit = function () {
       force: options.force || false,
       speedUnit: options.speedUnit || 'm/s',
       lengthUnit: options.lengthUnit || 'm',
-      temperatureUnit: options.temperatureUnit || 'celsius'
+      temperatureUnit: options.temperatureUnit || 'celsius',
+      elapsedRecordField: options.elapsedRecordField || false,
+      mode: options.mode || 'list'
     };
   }
 
@@ -79,16 +81,25 @@ var EasyFit = function () {
         }
       }
 
+      var fitObj = {};
       var sessions = [];
       var laps = [];
       var records = [];
       var events = [];
 
+      var tempLaps = [];
+      var tempRecords = [];
+
       var loopIndex = headerLength;
       var messageTypes = [];
 
+      var isModeCascade = this.options.mode === 'cascade';
+      var isCascadeNeeded = isModeCascade || this.options.mode === 'both';
+
+      var startDate = void 0;
+
       while (loopIndex < crcStart) {
-        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, loopIndex, this.options);
+        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, loopIndex, this.options, startDate);
 
         var nextIndex = _readRecord.nextIndex;
         var messageType = _readRecord.messageType;
@@ -97,23 +108,45 @@ var EasyFit = function () {
         loopIndex = nextIndex;
         switch (messageType) {
           case 'lap':
+            if (isCascadeNeeded) {
+              message.records = tempRecords;
+              tempRecords = [];
+              tempLaps.push(message);
+            }
             laps.push(message);
             break;
           case 'session':
+            if (isCascadeNeeded) {
+              message.laps = tempLaps;
+              tempLaps = [];
+            }
             sessions.push(message);
             break;
           case 'event':
             events.push(message);
             break;
           case 'record':
+            if (!startDate) {
+              startDate = message.timestamp;
+              message.elapsed_time = 0;
+            }
             records.push(message);
+            if (isCascadeNeeded) {
+              tempRecords.push(message);
+            }
             break;
           default:
             break;
         }
       }
 
-      callback(null, { sessions: sessions, laps: laps, records: records, events: events });
+      if (isModeCascade) {
+        fitObj = { sessions: sessions, events: events };
+      } else {
+        fitObj = { sessions: sessions, laps: laps, records: records, events: events };
+      }
+
+      callback(null, fitObj);
     }
   }]);
 

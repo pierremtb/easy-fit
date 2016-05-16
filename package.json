@@ -1,38 +1,4 @@
 {
-  "_args": [
-    [
-      "babel-npm-module-example",
-      "/home/pierremtb/git/pierremtb"
-    ]
-  ],
-  "_from": "babel-npm-module-example@latest",
-  "_id": "babel-npm-module-example@0.0.6",
-  "_inCache": true,
-  "_installable": true,
-  "_location": "/babel-npm-module-example",
-  "_nodeVersion": "4.1.1",
-  "_npmUser": {
-    "email": "pierrejacquier39@gmail.com",
-    "name": "pierremtb"
-  },
-  "_npmVersion": "2.14.4",
-  "_phantomChildren": {},
-  "_requested": {
-    "name": "easy-fit",
-    "raw": "easy-fit",
-    "rawSpec": "",
-    "scope": null,
-    "spec": "latest",
-    "type": "tag"
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/easy-fit/-/easy-fit-0.0.1.tgz",
-  "_shasum": "ea18226d7635b2896dc549b5f057f8b27ad0849c",
-  "_shrinkwrap": null,
-  "_spec": "easy-fit",
-  "_where": "/home/pierremtb/git/pierremtb",
   "author": {
     "name": "pierremtb"
   },
@@ -65,12 +31,7 @@
     "run-sequence": "^1.1.5"
   },
   "directories": {},
-  "dist": {
-    "shasum": "ea18226d7635b2896dc549b5f057f8b27ad0849c",
-    "tarball": "https://registry.npmjs.org/babel-npm-module-example/-/babel-npm-module-example-0.0.6.tgz"
-  },
   "engine": "node >= 0.10.x",
-  "gitHead": "7bc6c2676a73bb9ba3e96a1ffc3b82414aff9988",
   "homepage": "http://pierrejacquier.com/projects/easy-fit",
   "keywords": [
     "fit",
@@ -89,12 +50,14 @@
   "name": "easy-fit",
   "optionalDependencies": {},
   "private": false,
-  "readme": "ERROR: No README data found!",
+  "readme": "./README.md",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/pierremtb/easy-fit.git"
   },
   "scripts": {
+    "example-output": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit > examples/output.json",
+    "example": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit",
     "test": "node node_modules/.bin/mocha --reporter spec test-dist/*"
   },
   "version": "0.0.1"

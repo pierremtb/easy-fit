@@ -7,6 +7,8 @@ export default class EasyFit {
       speedUnit: options.speedUnit || 'm/s',
       lengthUnit: options.lengthUnit || 'm',
       temperatureUnit: options.temperatureUnit || 'celsius',
+      elapsedRecordField: options.elapsedRecordField || false,
+      mode: options.mode || 'list',
     };
   }
 
@@ -63,37 +65,68 @@ export default class EasyFit {
       }
     }
 
+    let fitObj = {};
     const sessions = [];
     const laps = [];
     const records = [];
     const events = [];
 
+    let tempLaps = [];
+    let tempRecords = [];
+
     let loopIndex = headerLength;
     const messageTypes = [];
+
+    const isModeCascade = this.options.mode === 'cascade';
+    const isCascadeNeeded = isModeCascade || this.options.mode === 'both';
+
+    let startDate;
 
     while (loopIndex < crcStart) {
       const { nextIndex,
         messageType,
-        message } = readRecord(blob, messageTypes, loopIndex, this.options);
+        message } = readRecord(blob, messageTypes, loopIndex, this.options, startDate);
       loopIndex = nextIndex;
       switch (messageType) {
         case 'lap':
+          if (isCascadeNeeded) {
+            message.records = tempRecords;
+            tempRecords = [];
+            tempLaps.push(message);
+          }
           laps.push(message);
           break;
         case 'session':
+          if (isCascadeNeeded) {
+            message.laps = tempLaps;
+            tempLaps = [];
+          }
           sessions.push(message);
           break;
         case 'event':
           events.push(message);
           break;
         case 'record':
+          if (!startDate) {
+            startDate = message.timestamp;
+            message.elapsed_time = 0;
+          }
           records.push(message);
+          if (isCascadeNeeded) {
+            tempRecords.push(message);
+          }
           break;
         default: break;
       }
     }
 
-    callback(null, { sessions, laps, records, events });
+    if (isModeCascade) {
+      fitObj = { sessions, events };
+    } else {
+      fitObj = { sessions, laps, records, events };
+    }
+
+    callback(null, fitObj);
   }
 }
 

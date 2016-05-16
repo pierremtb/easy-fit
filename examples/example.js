@@ -9,8 +9,10 @@ fs.readFile(file, function (err, content) {
     speedUnit: 'km/h',
     lengthUnit: 'km',
     temperatureUnit: 'kelvin',
+    elapsedRecordField: true,
+    mode: 'cascade',
   });
-  
+
   easyFit.parse(content, function (error, data) {
     if (error) {
       console.log(error);
