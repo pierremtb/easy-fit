@@ -58,7 +58,7 @@
   "scripts": {
     "example-output": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit > examples/output.json",
     "example": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit",
-    "test": "node node_modules/.bin/mocha --reporter spec test-dist/*"
+    "test": "node_modules/gulp/bin/gulp.js;"
   },
   "version": "0.0.1"
 }
