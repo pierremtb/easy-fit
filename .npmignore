@@ -29,5 +29,13 @@ node_modules
 # npm log file
 npm-debug.log
 
-# dist folder
-dist/
+# src and tests folder
+src/
+test/
+test-dist/
+examples/
+.babelrc
+.eslintignore
+.eslintrc
+gulpfile.babel.js
+

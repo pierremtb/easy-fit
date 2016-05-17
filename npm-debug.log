@@ -1,0 +1,131 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'publish' ]
+2 info using npm@3.8.9
+3 info using node@v6.1.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/home/pierremtb/git/pierremtb/easy-fit',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /home/pierremtb/.npm/easy-fit/0.0.2/package.tgz not in flight; packing
+9 verbose correctMkdir /home/pierremtb/.npm correctMkdir not in flight; initializing
+10 info lifecycle easy-fit@0.0.2~prepublish: easy-fit@0.0.2
+11 silly lifecycle easy-fit@0.0.2~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/home/pierremtb/.npm/easy-fit/0.0.2/package.tgz',
+12 verbose tar pack   '/home/pierremtb/git/pierremtb/easy-fit' ]
+13 verbose tarball /home/pierremtb/.npm/easy-fit/0.0.2/package.tgz
+14 verbose folder /home/pierremtb/git/pierremtb/easy-fit
+15 verbose addLocalTarball adding from inside cache /home/pierremtb/.npm/easy-fit/0.0.2/package.tgz
+16 verbose correctMkdir /home/pierremtb/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd easy-fit@0.0.2
+18 verbose afterAdd /home/pierremtb/.npm/easy-fit/0.0.2/package/package.json not in flight; writing
+19 verbose correctMkdir /home/pierremtb/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /home/pierremtb/.npm/easy-fit/0.0.2/package/package.json written
+21 silly publish { author: { name: 'pierremtb' },
+21 silly publish   bugs: { url: 'https://github.com/pierremtb/easy-fit/issues' },
+21 silly publish   contributors: [ { name: 'Pierre Jacquier', email: 'pierrejacquier39@gmail.com' } ],
+21 silly publish   dependencies: {},
+21 silly publish   description: 'Parse your .FIT files easily, directly from JS.',
+21 silly publish   devDependencies:
+21 silly publish    { babel: '^6.3.26',
+21 silly publish      'babel-core': '^6.4.0',
+21 silly publish      'babel-preset-es2015': '^6.3.13',
+21 silly publish      chai: '^3.4.1',
+21 silly publish      del: '^2.2.0',
+21 silly publish      gulp: '^3.9.0',
+21 silly publish      'gulp-babel': '^6.1.1',
+21 silly publish      'gulp-jshint': '^2.0.0',
+21 silly publish      'gulp-mocha': '^2.2.0',
+21 silly publish      jshint: '^2.9.1',
+21 silly publish      eslint: '^2.8.0',
+21 silly publish      'eslint-config-airbnb': '^8.0.0',
+21 silly publish      'eslint-plugin-import': '^1.6.1',
+21 silly publish      mocha: '^2.3.4',
+21 silly publish      'run-sequence': '^1.1.5' },
+21 silly publish   directories: {},
+21 silly publish   engine: 'node >= 0.10.x',
+21 silly publish   homepage: 'http://pierrejacquier.com/projects/easy-fit',
+21 silly publish   keywords: [ 'fit', 'ant', 'garmin', 'parse' ],
+21 silly publish   license: 'MIT',
+21 silly publish   main: 'dist/easy-fit.js',
+21 silly publish   maintainers: [ { name: 'pierremtb', email: 'pierrejacquier39@gmail.com' } ],
+21 silly publish   name: 'easy-fit',
+21 silly publish   optionalDependencies: {},
+21 silly publish   private: false,
+21 silly publish   repository:
+21 silly publish    { type: 'git',
+21 silly publish      url: 'git+ssh://git@github.com/pierremtb/easy-fit.git' },
+21 silly publish   scripts:
+21 silly publish    { 'example-output': 'node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit > examples/output.json',
+21 silly publish      example: 'node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit',
+21 silly publish      test: 'node_modules/gulp/bin/gulp.js;' },
+21 silly publish   version: '0.0.2',
+21 silly publish   readme: '# easy-fit\n\n> Parse your .FIT files easily, directly from JS.\n> Written in ES6.\n\n\n## Install\n\n```\n$ npm install easy-fit\n```\n\n## How to use\n\nSee in [examples](./examples) folder:\n\n```javascript\n// Require the module\nvar EasyFit = require(\'./../dist/easy-fit.js\').default;\n\n// Read a .FIT file\nvar fs = require(\'fs\');\nfs.readFile(\'./example.fit\', function (err, content) {\n\n  // Create a EasyFit instance (options argument is optional)\n  var easyFit = new EasyFit({\n    force: true,\n    speedUnit: \'km/h\',\n    lengthUnit: \'km\',\n    temperatureUnit: \'kelvin\',\n    elapsedRecordField: true,\n    mode: \'cascade\',\n  });\n  \n  // Parse your file\n  easyFit.parse(content, function (error, data) {\n  \n    // Handle result of parse method\n    if (error) {\n      console.log(error);\n    } else {\n      console.log(JSON.stringify(data));\n    }\n    \n  });\n  \n});\n```\n\n## API Documentation\n### new EasyFit(Object _options_)\nNeeded to create a new instance. _options_ is optional, and is used to customize the returned object.\n\nAllowed properties :\n- `mode`: String\n  - `cascade`: Returned object is organized as a tree, eg. each lap contains a `records` fields, that is an array of its records (**default**)\n  - `list`: Returned object is organized as lists of sessions, laps, records, etc..., without parent-child relation\n  - `both`: A mix of the two other modes, eg. `records` are available inside the root field as well as inside each laps\n- `lengthUnit`: String\n  - `m`: Lengths are in meters (**default**)\n  - `km`: Lengths are in kilometers\n  - `mi`: Lengths are in miles\n- `temperatureUnit`: String\n  - `celsius`:Temperatures are in °C (**default**)\n  - `kelvin`: Temperatures are in °K\n  - `farhenheit`: Temperatures are in °F\n- `speedUnit`: String\n  - `m/s`: Speeds are in meters per seconds (**default**)\n  - `km/h`: Speeds are in kilometers per hour\n  - `mph`: Speeds are in miles per hour\n- `force`: Boolean\n  - `true`: Continues even if they are errors (**default for now**)\n  - `false`: Stops if an error occurs\n- `elapsedRecordField`: Boolean\n  - `true`: Includes a `elapsed_time` field inside each `record` field, containing the elapsed time in seconds since the first record (**default**)\n  - `false`\n\n### easyFit.parse(Buffer _file_, Function _callback_)\n_callback_ receives two arguments, the first as a error String, and the second as Object, result of parsing.\n\n## Contributors\n\nBig thanks to [Mikael Lofjärd](https://github.com/mlofjard) for [his early prototype](https://github.com/mlofjard/jsonfit).\n\n## License\n\nMIT license; see [LICENSE](./LICENSE).\n\n(c) 2016 by Pierre Jacquier\n',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: '1281ae9bd480dc0bdc0df1fd67d43dc017632562',
+21 silly publish   _id: 'easy-fit@0.0.2',
+21 silly publish   _shasum: '3b4e048e6ebd8cb7604a34076cb8cb2183a9836d',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name easy-fit
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry data Result {
+26 silly mapToRegistry   raw: 'easy-fit',
+26 silly mapToRegistry   scope: null,
+26 silly mapToRegistry   name: 'easy-fit',
+26 silly mapToRegistry   rawSpec: '',
+26 silly mapToRegistry   spec: 'latest',
+26 silly mapToRegistry   type: 'tag' }
+27 silly mapToRegistry uri https://registry.npmjs.org/easy-fit
+28 verbose publish registryBase https://registry.npmjs.org/
+29 silly publish uploading /home/pierremtb/.npm/easy-fit/0.0.2/package.tgz
+30 verbose request uri https://registry.npmjs.org/easy-fit
+31 verbose request sending authorization for write operation
+32 info attempt registry request try #1 at 21:15:38
+33 verbose request using bearer token for auth
+34 verbose request id 437f54d095299967
+35 http request PUT https://registry.npmjs.org/easy-fit
+36 http 403 https://registry.npmjs.org/easy-fit
+37 verbose headers { 'content-type': 'application/json',
+37 verbose headers   'cache-control': 'max-age=300',
+37 verbose headers   'content-length': '95',
+37 verbose headers   'accept-ranges': 'bytes',
+37 verbose headers   date: 'Tue, 17 May 2016 19:15:39 GMT',
+37 verbose headers   via: '1.1 varnish',
+37 verbose headers   connection: 'keep-alive',
+37 verbose headers   'x-served-by': 'cache-lhr6343-LHR',
+37 verbose headers   'x-cache': 'MISS',
+37 verbose headers   'x-cache-hits': '0',
+37 verbose headers   'x-timer': 'S1463512538.783437,VS0,VE936',
+37 verbose headers   vary: 'Accept-Encoding' }
+38 verbose request invalidating /home/pierremtb/.npm/registry.npmjs.org/easy-fit on PUT
+39 error publish Failed PUT 403
+40 verbose stack Error: "You cannot publish over the previously published version 0.0.2." : easy-fit
+40 verbose stack     at makeError (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+40 verbose stack     at CachingRegistryClient.<anonymous> (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+40 verbose stack     at Request._callback (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+40 verbose stack     at Request.self.callback (/usr/lib/node_modules/npm/node_modules/request/request.js:200:22)
+40 verbose stack     at emitTwo (events.js:106:13)
+40 verbose stack     at Request.emit (events.js:191:7)
+40 verbose stack     at Request.<anonymous> (/usr/lib/node_modules/npm/node_modules/request/request.js:1067:10)
+40 verbose stack     at emitOne (events.js:101:20)
+40 verbose stack     at Request.emit (events.js:188:7)
+40 verbose stack     at IncomingMessage.<anonymous> (/usr/lib/node_modules/npm/node_modules/request/request.js:988:12)
+41 verbose statusCode 403
+42 verbose pkgid easy-fit
+43 verbose cwd /home/pierremtb/git/pierremtb/easy-fit
+44 error Linux 4.1.23-1-MANJARO
+45 error argv "/usr/bin/node" "/usr/bin/npm" "publish"
+46 error node v6.1.0
+47 error npm  v3.8.9
+48 error code E403
+49 error "You cannot publish over the previously published version 0.0.2." : easy-fit
+50 error If you need help, you may report this error at:
+50 error     <https://github.com/npm/npm/issues>
+51 verbose exit [ 1, true ]
