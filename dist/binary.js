@@ -179,7 +179,7 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
     var scale = _message$getAttribute2.scale;
     var offset = _message$getAttribute2.offset;
 
-    if (field !== 'unknown' && field !== '') {
+    if (field !== 'unknown' && field !== '' && field !== undefined) {
       fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
     }
 

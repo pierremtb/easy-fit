@@ -136,14 +136,21 @@ var EasyFit = function () {
             }
             break;
           default:
+            if (messageType !== '') {
+              fitObj[messageType] = message;
+            }
             break;
         }
       }
 
       if (isModeCascade) {
-        fitObj = { sessions: sessions, events: events };
+        fitObj.activity.sessions = sessions;
+        fitObj.activity.events = events;
       } else {
-        fitObj = { sessions: sessions, laps: laps, records: records, events: events };
+        fitObj.sessions = sessions;
+        fitObj.laps = laps;
+        fitObj.records = records;
+        fitObj.events = events;
       }
 
       callback(null, fitObj);

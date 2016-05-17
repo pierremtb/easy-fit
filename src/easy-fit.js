@@ -65,7 +65,7 @@ export default class EasyFit {
       }
     }
 
-    let fitObj = {};
+    const fitObj = {};
     const sessions = [];
     const laps = [];
     const records = [];
@@ -116,14 +116,22 @@ export default class EasyFit {
             tempRecords.push(message);
           }
           break;
-        default: break;
+        default:
+          if (messageType !== '') {
+            fitObj[messageType] = message;
+          }
+          break;
       }
     }
 
     if (isModeCascade) {
-      fitObj = { sessions, events };
+      fitObj.activity.sessions = sessions;
+      fitObj.activity.events = events;
     } else {
-      fitObj = { sessions, laps, records, events };
+      fitObj.sessions = sessions;
+      fitObj.laps = laps;
+      fitObj.records = records;
+      fitObj.events = events;
     }
 
     callback(null, fitObj);

@@ -153,7 +153,7 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
     const fDef = messageType.fieldDefs[i];
     const data = readData(blob, fDef, readDataFromIndex);
     const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
-    if (field !== 'unknown' && field !== '') {
+    if (field !== 'unknown' && field !== '' && field !== undefined) {
       fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
     }
 
