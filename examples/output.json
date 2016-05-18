@@ -2,10 +2,10 @@
   "file_id": {
     "serial_number": 3867897489,
     "time_created": "2015-10-12T14:47:44.000Z",
-    "manufacturer": 1,
+    "manufacturer": "garmin",
     "product": 1561,
     "number": 65535,
-    "type": 4
+    "type": "activity"
   },
   "file_creator": {
     "software_version": 340,
@@ -15,14 +15,13 @@
     "timestamp": "2015-10-12T15:42:35.000Z",
     "serial_number": 84643552,
     "cum_operating_time": 3340,
-    "manufacturer": 9,
+    "manufacturer": "saris",
     "product": 4096,
     "software_version": 58,
     "battery_voltage": 2.71484375,
-    "device_index": 3,
     "device_type": 11,
     "hardware_version": 255,
-    "battery_status": 3
+    "battery_status": "ok"
   },
   "device_settings": {
     "utc_offset": 0,
@@ -33,37 +32,36 @@
   "user_profile": {
     "friendly_name": 101,
     "weight": 58,
-    "gender": 1,
+    "gender": "male",
     "age": 16,
     "height": 0.18,
-    "language": 1,
-    "elev_setting": 0,
-    "weight_setting": 0,
+    "language": "french",
+    "elev_setting": "metric",
+    "weight_setting": "metric",
     "resting_heart_rate": 255,
     "default_max_biking_heart_rate": 185,
     "default_max_heart_rate": 185,
-    "hr_setting": 1,
-    "speed_setting": 0,
-    "dist_setting": 0,
-    "power_setting": 1,
-    "activity_class": 40,
-    "position_setting": 2,
-    "temperature_setting": 0
+    "hr_setting": "max",
+    "speed_setting": "metric",
+    "dist_setting": "metric",
+    "power_setting": "percent_ftp",
+    "position_setting": "degree_minute_second",
+    "temperature_setting": "metric"
   },
   "zones_target": {
     "functional_threshold_power": 200,
     "max_heart_rate": 220,
     "threshold_heart_rate": 255,
-    "hr_calc_type": 1,
-    "pwr_calc_type": 0
+    "hr_calc_type": "percent_max_hr",
+    "pwr_calc_type": "custom"
   },
   "activity": {
     "timestamp": "2015-10-12T15:42:37.000Z",
     "total_timer_time": 3233.431,
     "num_sessions": 1,
-    "type": 0,
-    "event": 26,
-    "event_type": 1,
+    "type": "manual",
+    "event": "activity",
+    "event_type": "stop",
     "sessions": [
       {
         "timestamp": "2015-10-12T15:42:37.000Z",
@@ -100,19 +98,18 @@
         "normalized_power": 229,
         "training_stress_score": 116.1,
         "intensity_factor": 1.143,
-        "left_right_balance": 65535,
         "threshold_power": 200,
         "stand_count": 65535,
-        "event": 9,
-        "event_type": 1,
-        "sport": 2,
-        "sub_sport": 0,
+        "event": "lap",
+        "event_type": "stop",
+        "sport": "cycling",
+        "sub_sport": "generic",
         "avg_heart_rate": 255,
         "max_heart_rate": 255,
         "avg_cadence": 84,
         "max_cadence": 124,
         "event_group": 255,
-        "trigger": 0,
+        "trigger": "activity_end",
         "avg_left_torque_effectiveness": 255,
         "avg_right_torque_effectiveness": 255,
         "avg_left_pedal_smoothness": 255,
@@ -152,17 +149,15 @@
             "total_ascent": 0.251,
             "total_descent": 0.257,
             "normalized_power": 229,
-            "left_right_balance": 65535,
             "stand_count": 65535,
-            "event": 9,
-            "event_type": 1,
+            "event": "lap",
+            "event_type": "stop",
             "avg_heart_rate": 255,
             "max_heart_rate": 255,
             "avg_cadence": 84,
             "max_cadence": 124,
-            "intensity": 255,
-            "lap_trigger": 7,
-            "sport": 2,
+            "lap_trigger": "session_end",
+            "sport": "cycling",
             "event_group": 255,
             "avg_left_torque_effectiveness": 255,
             "avg_right_torque_effectiveness": 255,
@@ -42158,64 +42153,64 @@
       {
         "timestamp": "2015-10-12T14:47:45.000Z",
         "data": 0,
-        "event": 0,
-        "event_type": 0,
+        "event": "timer",
+        "event_type": "start",
         "event_group": 0
       },
       {
         "timestamp": "2015-10-12T14:53:55.000Z",
         "data": 1,
-        "event": 0,
-        "event_type": 4,
+        "event": "timer",
+        "event_type": "stop_all",
         "event_group": 0
       },
       {
         "timestamp": "2015-10-12T14:54:29.000Z",
         "data": 1,
-        "event": 0,
-        "event_type": 0,
+        "event": "timer",
+        "event_type": "start",
         "event_group": 0
       },
       {
         "timestamp": "2015-10-12T15:30:39.000Z",
         "data": 1,
-        "event": 0,
-        "event_type": 4,
+        "event": "timer",
+        "event_type": "stop_all",
         "event_group": 0
       },
       {
         "timestamp": "2015-10-12T15:31:01.000Z",
         "data": 1,
-        "event": 0,
-        "event_type": 0,
+        "event": "timer",
+        "event_type": "start",
         "event_group": 0
       },
       {
         "timestamp": "2015-10-12T15:36:53.000Z",
         "data": 1,
-        "event": 0,
-        "event_type": 4,
+        "event": "timer",
+        "event_type": "stop_all",
         "event_group": 0
       },
       {
         "timestamp": "2015-10-12T15:36:55.000Z",
         "data": 1,
-        "event": 0,
-        "event_type": 0,
+        "event": "timer",
+        "event_type": "start",
         "event_group": 0
       },
       {
         "timestamp": "2015-10-12T15:42:35.000Z",
         "data": 0,
-        "event": 0,
-        "event_type": 4,
+        "event": "timer",
+        "event_type": "stop_all",
         "event_group": 0
       },
       {
         "timestamp": "2015-10-12T15:42:37.000Z",
         "data": 1,
-        "event": 8,
-        "event_type": 9,
+        "event": "session",
+        "event_type": "stop_disable_all",
         "event_group": 1
       }
     ]

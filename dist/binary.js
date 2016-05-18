@@ -50,6 +50,9 @@ function formatByType(data, type, scale, offset) {
     case 'uint16':
       return scale ? data / scale + offset : data;
     default:
+      if (_fit.FIT.types[type]) {
+        return _fit.FIT.types[type][data];
+      }
       return data;
   }
 }
@@ -195,17 +198,6 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
     nextIndex: startIndex + messageSize + 1,
     message: fields
   };
-
-  switch (messageType.globalMessageNumber) {
-    case _fit.FIT.TYPE.RECORD:
-      break;
-    case _fit.FIT.TYPE.LAP:
-      break;
-    case _fit.FIT.TYPE.SESSION:
-      break;
-    default:
-      break;
-  }
 
   return result;
 }

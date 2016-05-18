@@ -37,7 +37,11 @@ function formatByType(data, type, scale, offset) {
     case 'uint32':
     case 'uint16':
       return scale ? data / scale + offset : data;
-    default: return data;
+    default:
+      if (FIT.types[type]) {
+        return FIT.types[type][data];
+      }
+      return data;
   }
 }
 
@@ -169,16 +173,6 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
     nextIndex: startIndex + messageSize + 1,
     message: fields,
   };
-
-  switch (messageType.globalMessageNumber) {
-    case FIT.TYPE.RECORD:
-      break;
-    case FIT.TYPE.LAP:
-      break;
-    case FIT.TYPE.SESSION:
-      break;
-    default: break;
-  }
 
   return result;
 
