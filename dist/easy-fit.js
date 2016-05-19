@@ -143,10 +143,11 @@ var EasyFit = function () {
         }
       }
 
-      if (isModeCascade) {
+      if (isCascadeNeeded) {
         fitObj.activity.sessions = sessions;
         fitObj.activity.events = events;
-      } else {
+      }
+      if (!isModeCascade) {
         fitObj.sessions = sessions;
         fitObj.laps = laps;
         fitObj.records = records;

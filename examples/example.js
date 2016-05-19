@@ -7,10 +7,10 @@ fs.readFile(file, function (err, content) {
   var easyFit = new EasyFit({
     force: true,
     speedUnit: 'km/h',
-    lengthUnit: 'km',
-    temperatureUnit: 'kelvin',
+    lengthUnit: 'm',
+    temperatureUnit: 'celsius',
     elapsedRecordField: true,
-    mode: 'cascade',
+    mode: 'list',
   });
 
   easyFit.parse(content, function (error, data) {
