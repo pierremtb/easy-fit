@@ -179,6 +179,9 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
 }
 
 export function getArrayBuffer(buffer) {
+  if(buffer instanceof ArrayBuffer) {
+    return buffer;
+  }
   const ab = new ArrayBuffer(buffer.length);
   const view = new Uint8Array(ab);
   for (let i = 0; i < buffer.length; ++i) {
