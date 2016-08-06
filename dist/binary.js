@@ -203,6 +203,9 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
 }
 
 function getArrayBuffer(buffer) {
+  if (buffer instanceof ArrayBuffer) {
+    return buffer;
+  }
   var ab = new ArrayBuffer(buffer.length);
   var view = new Uint8Array(ab);
   for (var i = 0; i < buffer.length; ++i) {
