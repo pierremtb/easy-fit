@@ -81,6 +81,7 @@ _callback_ receives two arguments, the first as a error String, and the second a
 ## Contributors
 
 Big thanks to [Mikael Lofjärd](https://github.com/mlofjard) for [his early prototype](https://github.com/mlofjard/jsonfit).
+See [CONTRIBUTORS](./CONTRIBUTORS.md).
 
 ## License
 
