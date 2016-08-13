@@ -13,7 +13,7 @@ export const FIT = {
     },
     lengthUnits: {
       mi: {
-        multiplier: 1 / 1400,
+        multiplier: 1 / 1609.344,
         offset: 0,
       },
       km: {
