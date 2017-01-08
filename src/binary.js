@@ -1,5 +1,5 @@
-import {FIT} from './fit';
-import {getFitMessage, getFitMessageBaseType} from './messages';
+import { FIT } from './fit';
+import { getFitMessage, getFitMessageBaseType } from './messages';
 
 export function addEndian(littleEndian, bytes) {
     let result = 0;
@@ -30,8 +30,7 @@ function readData(blob, fDef, startIndex) {
 
 function formatByType(data, type, scale, offset) {
     switch (type) {
-        case 'date_time':
-            return new Date((data * 1000) + 631062000000);
+        case 'date_time': return new Date((data * 1000) + 631062000000);
         case 'sint32':
         case 'sint16':
             return data * FIT.scConst;
@@ -91,10 +90,7 @@ function applyOptions(data, field, options) {
         case 'avg_temperature':
         case 'max_temperature':
             return convertTo(data, 'temperatureUnits', options.temperatureUnit);
-        case 'position_long':
-            return data > 180 ? data - 360 : data;
-        default:
-            return data;
+        default: return data;
     }
 }
 
@@ -119,7 +115,7 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
         for (let i = 0; i < mTypeDef.numberOfFields; i++) {
             const fDefIndex = startIndex + 6 + (i * 3);
             const baseType = blob[fDefIndex + 2];
-            const {field, type} = message.getAttributes(blob[fDefIndex]);
+            const { field, type } = message.getAttributes(blob[fDefIndex]);
             const fDef = {
                 type,
                 fDefNo: blob[fDefIndex],
@@ -160,7 +156,7 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
     for (let i = 0; i < messageType.fieldDefs.length; i++) {
         const fDef = messageType.fieldDefs[i];
         const data = readData(blob, fDef, readDataFromIndex);
-        const {field, type, scale, offset} = message.getAttributes(fDef.fDefNo);
+        const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
         if (field !== 'unknown' && field !== '' && field !== undefined) {
             fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
         }
@@ -183,7 +179,7 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
 }
 
 export function getArrayBuffer(buffer) {
-    if (buffer instanceof ArrayBuffer) {
+    if(buffer instanceof ArrayBuffer) {
         return buffer;
     }
     const ab = new ArrayBuffer(buffer.length);
