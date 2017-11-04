@@ -30,7 +30,7 @@ function readData(blob, fDef, startIndex) {
 
 function formatByType(data, type, scale, offset) {
     switch (type) {
-        case 'date_time': return new Date((data * 1000) + 631062000000);
+        case 'date_time': return new Date((data * 1000) + 631065600000);
         case 'sint32':
         case 'sint16':
             return data * FIT.scConst;
