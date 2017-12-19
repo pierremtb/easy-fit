@@ -45,6 +45,29 @@ function formatByType(data, type, scale, offset) {
     }
 }
 
+function isInvalidValue(data, type) {
+    switch (type) {
+      case 'enum': return data === 0xFF;
+      case 'sint8': return data === 0x7F;
+      case 'uint8': return data === 0xFF;
+      case 'sint16': return data === 0x7FFF;
+      case 'unit16': return data === 0xFFFF;
+      case 'sint32': return data === 0x7FFFFFFF;
+      case 'uint32': return data === 0xFFFFFFFF;
+      case 'string': return data === 0x00;
+      case 'float32': return data === 0xFFFFFFFF;
+      case 'float64': return data === 0xFFFFFFFFFFFFFFFF;
+      case 'uint8z': return data === 0x00;
+      case 'uint16z': return data === 0x0000;
+      case 'uint32z': return data === 0x000000;
+      case 'byte': return data === 0xFF;
+      case 'sint64': return data === 0x7FFFFFFFFFFFFFFF;
+      case 'uint64': return data === 0xFFFFFFFFFFFFFFFF;
+      case 'uint64z': return data === 0x0000000000000000;
+      default: return false;
+    }
+  }
+
 function convertTo(data, unitsList, speedUnit) {
     const unitObj = FIT.options[unitsList][speedUnit];
     return unitObj ? data * unitObj.multiplier + unitObj.offset : data;
@@ -156,14 +179,18 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
     for (let i = 0; i < messageType.fieldDefs.length; i++) {
         const fDef = messageType.fieldDefs[i];
         const data = readData(blob, fDef, readDataFromIndex);
-        const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
-        if (field !== 'unknown' && field !== '' && field !== undefined) {
-            fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+        
+        if (!isInvalidValue(data, fDef.type)) {
+            const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
+            if (field !== 'unknown' && field !== '' && field !== undefined) {
+                fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+            }
+
+            if (message.name === 'record' && options.elapsedRecordField) {
+                fields.elapsed_time = (fields.timestamp - startDate) / 1000;
+            }
         }
 
-        if (message.name === 'record' && options.elapsedRecordField) {
-            fields.elapsed_time = (fields.timestamp - startDate) / 1000;
-        }
         readDataFromIndex += fDef.size;
         messageSize += fDef.size;
     }

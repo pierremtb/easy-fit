@@ -42,7 +42,7 @@ function readData(blob, fDef, startIndex) {
 function formatByType(data, type, scale, offset) {
     switch (type) {
         case 'date_time':
-            return new Date(data * 1000 + 631062000000);
+            return new Date(data * 1000 + 631065600000);
         case 'sint32':
         case 'sint16':
             return data * _fit.FIT.scConst;
@@ -54,6 +54,47 @@ function formatByType(data, type, scale, offset) {
                 return _fit.FIT.types[type][data];
             }
             return data;
+    }
+}
+
+function isInvalidValue(data, type) {
+    switch (type) {
+        case 'enum':
+            return data === 0xFF;
+        case 'sint8':
+            return data === 0x7F;
+        case 'uint8':
+            return data === 0xFF;
+        case 'sint16':
+            return data === 0x7FFF;
+        case 'unit16':
+            return data === 0xFFFF;
+        case 'sint32':
+            return data === 0x7FFFFFFF;
+        case 'uint32':
+            return data === 0xFFFFFFFF;
+        case 'string':
+            return data === 0x00;
+        case 'float32':
+            return data === 0xFFFFFFFF;
+        case 'float64':
+            return data === 0xFFFFFFFFFFFFFFFF;
+        case 'uint8z':
+            return data === 0x00;
+        case 'uint16z':
+            return data === 0x0000;
+        case 'uint32z':
+            return data === 0x000000;
+        case 'byte':
+            return data === 0xFF;
+        case 'sint64':
+            return data === 0x7FFFFFFFFFFFFFFF;
+        case 'uint64':
+            return data === 0xFFFFFFFFFFFFFFFF;
+        case 'uint64z':
+            return data === 0x0000000000000000;
+        default:
+            return false;
     }
 }
 
@@ -102,8 +143,6 @@ function applyOptions(data, field, options) {
         case 'avg_temperature':
         case 'max_temperature':
             return convertTo(data, 'temperatureUnits', options.temperatureUnit);
-        case 'position_long':
-            return data > 180 ? data - 360 : data;
         default:
             return data;
     }
@@ -176,19 +215,22 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
         var _fDef = messageType.fieldDefs[_i];
         var data = readData(blob, _fDef, readDataFromIndex);
 
-        var _message$getAttribute2 = message.getAttributes(_fDef.fDefNo),
-            field = _message$getAttribute2.field,
-            type = _message$getAttribute2.type,
-            scale = _message$getAttribute2.scale,
-            offset = _message$getAttribute2.offset;
+        if (!isInvalidValue(data, _fDef.type)) {
+            var _message$getAttribute2 = message.getAttributes(_fDef.fDefNo),
+                field = _message$getAttribute2.field,
+                type = _message$getAttribute2.type,
+                scale = _message$getAttribute2.scale,
+                offset = _message$getAttribute2.offset;
 
-        if (field !== 'unknown' && field !== '' && field !== undefined) {
-            fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+            if (field !== 'unknown' && field !== '' && field !== undefined) {
+                fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+            }
+
+            if (message.name === 'record' && options.elapsedRecordField) {
+                fields.elapsed_time = (fields.timestamp - startDate) / 1000;
+            }
         }
 
-        if (message.name === 'record' && options.elapsedRecordField) {
-            fields.elapsed_time = (fields.timestamp - startDate) / 1000;
-        }
         readDataFromIndex += _fDef.size;
         messageSize += _fDef.size;
     }

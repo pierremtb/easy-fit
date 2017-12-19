@@ -12,7 +12,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var EasyFit = function () {
   function EasyFit() {
-    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     _classCallCheck(this, EasyFit);
 
@@ -99,11 +99,10 @@ var EasyFit = function () {
       var startDate = void 0;
 
       while (loopIndex < crcStart) {
-        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, loopIndex, this.options, startDate);
-
-        var nextIndex = _readRecord.nextIndex;
-        var messageType = _readRecord.messageType;
-        var message = _readRecord.message;
+        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, loopIndex, this.options, startDate),
+            nextIndex = _readRecord.nextIndex,
+            messageType = _readRecord.messageType,
+            message = _readRecord.message;
 
         loopIndex = nextIndex;
         switch (messageType) {
