@@ -416,7 +416,7 @@ export const FIT = {
       253: { field: 'timestamp', type: 'date_time', scale: null, offset: 0, units: 's' },
       0: { field: 'position_lat', type: 'sint32', scale: null, offset: 0, units: 'semicircles' },
       1: { field: 'position_long', type: 'sint32', scale: null, offset: 0, units: 'semicircles' },
-      2: { field: 'altitude', type: 'uint16', scale: 5, offset: 500, units: 'm' },
+      2: { field: 'altitude', type: 'uint16', scale: 5, offset: -500, units: 'm' },
       3: { field: 'heart_rate', type: 'uint8', scale: null, offset: 0, units: 'bpm' },
       4: { field: 'cadence', type: 'uint8', scale: null, offset: 0, units: 'rpm' },
       5: { field: 'distance', type: 'uint32', scale: 100, offset: 0, units: 'm' },
