@@ -19,7 +19,7 @@ function readData(blob, fDef, startIndex) {
         }
         const uint32Rep = addEndian(fDef.littleEndian, temp);
 
-        if (fDef.dataType === 'sint32') {
+        if (fDef.type === 'sint32') {
             return (uint32Rep >> 0);
         }
 
