@@ -1666,6 +1666,7 @@ export const FIT = {
       2153: 'fr225',
       2156: 'fr630',
       2157: 'fr230',
+      2158: 'fr735xt',
       2160: 'vivo_active_apac',
       2161: 'vector_2',
       2162: 'vector_2s',
