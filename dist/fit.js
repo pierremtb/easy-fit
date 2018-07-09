@@ -475,7 +475,10 @@ var FIT = exports.FIT = {
       73: { field: 'enhanced_speed', type: 'uint32', scale: 1000, offset: 0, units: 'm/s' },
       78: { field: 'enhanced_altitude', type: 'uint32', scale: 5, offset: 500, units: 'm' },
       81: { field: 'battery_soc', type: 'uint8', scale: 2, offset: 0, units: 'percent' },
-      82: { field: 'motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' }
+      82: { field: 'motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
+      83: { field: 'vertical_ratio', type: 'uint16', scale: 100, offset: 0, units: '%' },
+      84: { field: 'stance_time_balance', type: 'uint16', scale: 100, offset: 0, units: '%' },
+      85: { field: 'step_length', type: 'uint16', scale: 10, offset: 0, units: 'mm' }
     },
     21: {
       name: 'event',
@@ -639,6 +642,23 @@ var FIT = exports.FIT = {
       7: { field: 'heart_rate_type', type: 'hr_type', scale: null, offset: 0, units: '' },
       8: { field: 'status', type: 'bp_status', scale: null, offset: 0, units: '' },
       9: { field: 'user_profile_index', type: 'message_index', scale: null, offset: 0, units: '' }
+    },
+    206: {
+      name: 'field_description',
+      0: { field: 'developer_data_index', type: 'uint8', scale: null, offset: 0, units: '' },
+      1: { field: 'field_definition_number', type: 'uint8', scale: null, offset: 0, units: '' },
+      2: { field: 'fit_base_type_id', type: 'uint8', scale: null, offset: 0, units: '' },
+      3: { field: 'field_name', type: 'string', scale: null, offset: 0, units: '' },
+      //4: { field: 'array', type: 'uint8', scale: null, offset: 0, units: '' },
+      //5: { field: 'components', type: 'string', scale: null, offset: 0, units: '' },
+      6: { field: 'scale', type: 'uint8', scale: null, offset: 0, units: '' },
+      7: { field: 'offset', type: 'sint8', scale: null, offset: 0, units: '' },
+      8: { field: 'units', type: 'string', scale: null, offset: 0, units: '' },
+      // 9: { field: 'bits', type: 'string', scale: null, offset: 0, units: '' },
+      // 10: { field: 'accumulate', type: 'string', scale: null, offset: 0, units: '' },
+      //13: { field: 'fit_base_unit_id', type: 'uint16', scale: null, offset: 0, units: '' },
+      // 14: { field: 'native_mesg_num', type: 'mesg_num', scale: null, offset: 0, units: '' },
+      15: { field: 'native_field_num', type: 'uint8', scale: null, offset: 0, units: '' }
     }
   },
   types: {

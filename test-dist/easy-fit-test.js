@@ -53,4 +53,25 @@ describe('easyfit tests', function () {
             });
         });
     });
+
+    it('expects fit with compressed header to be parsed', function (done) {
+        this.timeout(5000);
+        var easyFit = new _easyFit2.default({ force: true });
+        _fs2.default.readFile('./test/compressed-header.fit', function (err, buffer) {
+            if (err) {
+                throw "Unable to read file";
+            }
+            easyFit.parse(buffer, function (fitError, fitObject) {
+                if (fitError) {
+                    throw "Error parsing";
+                }
+                (0, _chai.expect)(fitObject).to.have.property('records');
+                (0, _chai.expect)(fitObject.records[0]).to.have.property('Ground Time');
+                (0, _chai.expect)(fitObject.records[0]).to.have.property('Vertical Oscillation');
+                (0, _chai.expect)(fitObject.records[0]).to.have.property('Elevation');
+
+                done();
+            });
+        });
+    });
 });

@@ -92,19 +92,23 @@ var EasyFit = function () {
 
       var loopIndex = headerLength;
       var messageTypes = [];
+      var developerFields = [];
 
       var isModeCascade = this.options.mode === 'cascade';
       var isCascadeNeeded = isModeCascade || this.options.mode === 'both';
 
       var startDate = void 0;
 
+      var count = 0;
+
       while (loopIndex < crcStart) {
-        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, loopIndex, this.options, startDate),
+        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, developerFields, loopIndex, this.options, startDate),
             nextIndex = _readRecord.nextIndex,
             messageType = _readRecord.messageType,
             message = _readRecord.message;
 
         loopIndex = nextIndex;
+
         switch (messageType) {
           case 'lap':
             if (isCascadeNeeded) {
