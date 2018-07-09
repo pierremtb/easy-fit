@@ -11,7 +11,6 @@
       "name": "Pierre Jacquier"
     }
   ],
-  "dependencies": {},
   "description": "Parse your .FIT files easily, directly from JS.",
   "devDependencies": {
     "babel": "^6.3.26",
@@ -57,7 +56,8 @@
   "scripts": {
     "example-output": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit > examples/output.json",
     "example": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit",
-    "test": "node_modules/gulp/bin/gulp.js;"
+    "test": "node_modules/gulp/bin/gulp.js;",
+    "build": "node_modules/gulp/bin/gulp.js babel"
   },
   "version": "0.0.8"
 }

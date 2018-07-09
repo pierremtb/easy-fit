@@ -76,6 +76,7 @@ export default class EasyFit {
 
     let loopIndex = headerLength;
     const messageTypes = [];
+    const developerFields = [];
 
     const isModeCascade = this.options.mode === 'cascade';
     const isCascadeNeeded = isModeCascade || this.options.mode === 'both';
@@ -85,8 +86,9 @@ export default class EasyFit {
     while (loopIndex < crcStart) {
       const { nextIndex,
         messageType,
-        message } = readRecord(blob, messageTypes, loopIndex, this.options, startDate);
+        message } = readRecord(blob, messageTypes, developerFields, loopIndex, this.options, startDate);
       loopIndex = nextIndex;
+
       switch (messageType) {
         case 'lap':
           if (isCascadeNeeded) {

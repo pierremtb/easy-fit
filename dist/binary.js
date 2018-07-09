@@ -36,6 +36,16 @@ function readData(blob, fDef, startIndex) {
 
         return uint32Rep;
     }
+
+    if (fDef.type === 'string') {
+        var _temp = [];
+        for (var _i = 0; _i < fDef.size; _i++) {
+            if (blob[startIndex + _i]) {
+                _temp.push(blob[startIndex + _i]);
+            }
+        }
+        return new Buffer(_temp).toString('utf-8');
+    }
     return blob[startIndex];
 }
 
@@ -148,7 +158,7 @@ function applyOptions(data, field, options) {
     }
 }
 
-function readRecord(blob, messageTypes, startIndex, options, startDate) {
+function readRecord(blob, messageTypes, developerFields, startIndex, options, startDate) {
     var recordHeader = blob[startIndex];
     var localMessageType = recordHeader & 15;
 
@@ -156,17 +166,21 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
         // is definition message
         // startIndex + 1 is reserved
 
+        var hasDeveloperData = (recordHeader & 32) === 32;
         var lEnd = blob[startIndex + 2] === 0;
+        var numberOfFields = blob[startIndex + 5];
+        var numberOfDeveloperDataFields = hasDeveloperData ? blob[startIndex + 5 + numberOfFields * 3 + 1] : 0;
+
         var mTypeDef = {
             littleEndian: lEnd,
             globalMessageNumber: addEndian(lEnd, [blob[startIndex + 3], blob[startIndex + 4]]),
-            numberOfFields: blob[startIndex + 5],
+            numberOfFields: numberOfFields + numberOfDeveloperDataFields,
             fieldDefs: []
         };
 
         var _message = (0, _messages.getFitMessage)(mTypeDef.globalMessageNumber);
 
-        for (var i = 0; i < mTypeDef.numberOfFields; i++) {
+        for (var i = 0; i < numberOfFields; i++) {
             var fDefIndex = startIndex + 6 + i * 3;
             var baseType = blob[fDefIndex + 2];
 
@@ -187,23 +201,45 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
 
             mTypeDef.fieldDefs.push(fDef);
         }
+
+        for (var _i2 = 0; _i2 < numberOfDeveloperDataFields; _i2++) {
+            var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i2 * 3;
+
+            var fieldNum = blob[_fDefIndex];
+            var size = blob[_fDefIndex + 1];
+            var devDataIndex = blob[_fDefIndex + 2];
+
+            var devDef = developerFields[devDataIndex][fieldNum];
+
+            var _baseType = devDef.fit_base_type_id;
+
+            var _fDef = {
+                type: _fit.FIT.types.fit_base_type[_baseType],
+                fDefNo: fieldNum,
+                size: size,
+                endianAbility: (_baseType & 128) === 128,
+                littleEndian: lEnd,
+                baseTypeNo: _baseType & 15,
+                name: devDef.field_name,
+                dataType: (0, _messages.getFitMessageBaseType)(_baseType & 15),
+                isDeveloperField: true
+            };
+
+            mTypeDef.fieldDefs.push(_fDef);
+        }
+
         messageTypes[localMessageType] = mTypeDef;
 
+        var nextIndex = startIndex + 6 + mTypeDef.numberOfFields * 3;
+        var nextIndexWithDeveloperData = nextIndex + 1;
+
         return {
-            messageType: 'fieldDescription',
-            nextIndex: startIndex + 6 + mTypeDef.numberOfFields * 3
+            messageType: 'definition',
+            nextIndex: hasDeveloperData ? nextIndexWithDeveloperData : nextIndex
         };
     }
 
-    var messageType = void 0;
-
-    if (messageTypes[localMessageType]) {
-        messageType = messageTypes[localMessageType];
-    } else {
-        messageType = messageTypes[0];
-    }
-
-    // TODO: handle compressed header ((recordHeader & 128) == 128)
+    var messageType = messageTypes[localMessageType] || messageTypes[0];
 
     // uncompressed header
     var messageSize = 0;
@@ -211,19 +247,25 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
     var fields = {};
     var message = (0, _messages.getFitMessage)(messageType.globalMessageNumber);
 
-    for (var _i = 0; _i < messageType.fieldDefs.length; _i++) {
-        var _fDef = messageType.fieldDefs[_i];
-        var data = readData(blob, _fDef, readDataFromIndex);
+    for (var _i3 = 0; _i3 < messageType.fieldDefs.length; _i3++) {
+        var _fDef2 = messageType.fieldDefs[_i3];
+        var data = readData(blob, _fDef2, readDataFromIndex);
 
-        if (!isInvalidValue(data, _fDef.type)) {
-            var _message$getAttribute2 = message.getAttributes(_fDef.fDefNo),
-                field = _message$getAttribute2.field,
-                type = _message$getAttribute2.type,
-                scale = _message$getAttribute2.scale,
-                offset = _message$getAttribute2.offset;
+        if (!isInvalidValue(data, _fDef2.type)) {
 
-            if (field !== 'unknown' && field !== '' && field !== undefined) {
-                fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+            if (_fDef2.isDeveloperField) {
+                // Skip format of data if developer field
+                fields[_fDef2.name] = data;
+            } else {
+                var _message$getAttribute2 = message.getAttributes(_fDef2.fDefNo),
+                    field = _message$getAttribute2.field,
+                    type = _message$getAttribute2.type,
+                    scale = _message$getAttribute2.scale,
+                    offset = _message$getAttribute2.offset;
+
+                if (field !== 'unknown' && field !== '' && field !== undefined) {
+                    fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+                }
             }
 
             if (message.name === 'record' && options.elapsedRecordField) {
@@ -231,8 +273,13 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
             }
         }
 
-        readDataFromIndex += _fDef.size;
-        messageSize += _fDef.size;
+        readDataFromIndex += _fDef2.size;
+        messageSize += _fDef2.size;
+    }
+
+    if (message.name === 'field_description') {
+        developerFields[fields.developer_data_index] = developerFields[fields.developer_data_index] || [];
+        developerFields[fields.developer_data_index][fields.field_definition_number] = fields;
     }
 
     var result = {
