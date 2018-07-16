@@ -59,5 +59,8 @@
     "test": "node_modules/gulp/bin/gulp.js;",
     "build": "node_modules/gulp/bin/gulp.js babel"
   },
-  "version": "0.0.8"
+  "version": "0.0.8",
+  "dependencies": {
+    "buffer": "^5.1.0"
+  }
 }

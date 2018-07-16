@@ -475,10 +475,7 @@ var FIT = exports.FIT = {
       73: { field: 'enhanced_speed', type: 'uint32', scale: 1000, offset: 0, units: 'm/s' },
       78: { field: 'enhanced_altitude', type: 'uint32', scale: 5, offset: 500, units: 'm' },
       81: { field: 'battery_soc', type: 'uint8', scale: 2, offset: 0, units: 'percent' },
-      82: { field: 'motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
-      83: { field: 'vertical_ratio', type: 'uint16', scale: 100, offset: 0, units: '%' },
-      84: { field: 'stance_time_balance', type: 'uint16', scale: 100, offset: 0, units: '%' },
-      85: { field: 'step_length', type: 'uint16', scale: 10, offset: 0, units: 'mm' }
+      82: { field: 'motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' }
     },
     21: {
       name: 'event',

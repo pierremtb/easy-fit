@@ -99,8 +99,6 @@ var EasyFit = function () {
 
       var startDate = void 0;
 
-      var count = 0;
-
       while (loopIndex < crcStart) {
         var _readRecord = (0, _binary.readRecord)(blob, messageTypes, developerFields, loopIndex, this.options, startDate),
             nextIndex = _readRecord.nextIndex,

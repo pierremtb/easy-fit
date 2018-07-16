@@ -54,10 +54,10 @@ describe('easyfit tests', function () {
         });
     });
 
-    it('expects fit with compressed header to be parsed', function (done) {
+    it('expects fit with developer data to be parsed', function (done) {
         this.timeout(5000);
         var easyFit = new _easyFit2.default({ force: true });
-        _fs2.default.readFile('./test/compressed-header.fit', function (err, buffer) {
+        _fs2.default.readFile('./test/running-with-developer-data.fit', function (err, buffer) {
             if (err) {
                 throw "Unable to read file";
             }

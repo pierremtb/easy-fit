@@ -12,6 +12,8 @@ var _fit = require('./fit');
 
 var _messages = require('./messages');
 
+var _buffer = require('buffer');
+
 function addEndian(littleEndian, bytes) {
     var result = 0;
     if (!littleEndian) bytes.reverse();
@@ -44,8 +46,9 @@ function readData(blob, fDef, startIndex) {
                 _temp.push(blob[startIndex + _i]);
             }
         }
-        return new Buffer(_temp).toString('utf-8');
+        return new _buffer.Buffer(_temp).toString('utf-8');
     }
+
     return blob[startIndex];
 }
 
@@ -241,6 +244,8 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
 
     var messageType = messageTypes[localMessageType] || messageTypes[0];
 
+    // TODO: handle compressed header ((recordHeader & 128) == 128)
+
     // uncompressed header
     var messageSize = 0;
     var readDataFromIndex = startIndex + 1;
@@ -252,7 +257,6 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
         var data = readData(blob, _fDef2, readDataFromIndex);
 
         if (!isInvalidValue(data, _fDef2.type)) {
-
             if (_fDef2.isDeveloperField) {
                 // Skip format of data if developer field
                 fields[_fDef2.name] = data;
