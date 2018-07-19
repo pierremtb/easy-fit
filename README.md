@@ -63,7 +63,7 @@ Allowed properties :
 - `temperatureUnit`: String
   - `celsius`:Temperatures are in °C (**default**)
   - `kelvin`: Temperatures are in °K
-  - `farhenheit`: Temperatures are in °F
+  - `fahrenheit`: Temperatures are in °F
 - `speedUnit`: String
   - `m/s`: Speeds are in meters per seconds (**default**)
   - `km/h`: Speeds are in kilometers per hour
