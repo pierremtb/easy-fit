@@ -67,7 +67,7 @@ function isInvalidValue(data, type) {
             return data === 0xFF;
         case 'sint16':
             return data === 0x7FFF;
-        case 'unit16':
+        case 'uint16':
             return data === 0xFFFF;
         case 'sint32':
             return data === 0x7FFFFFFF;
