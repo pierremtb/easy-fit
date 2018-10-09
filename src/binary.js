@@ -18,13 +18,26 @@ function readData(blob, fDef, startIndex) {
         for (let i = 0; i < fDef.size; i++) {
             temp.push(blob[startIndex + i]);
         }
-        const uint32Rep = addEndian(fDef.littleEndian, temp);
 
-        if (fDef.type === 'sint32') {
-            return (uint32Rep >> 0);
+        var buffer = new Uint8Array(temp).buffer;
+        var dataView = new DataView(buffer);
+
+        switch (fDef.type) {
+            case 'sint16':
+                return dataView.getInt16(0, fDef.littleEndian);
+            case 'uint16':
+                return dataView.getUint16(0, fDef.littleEndian);
+            case 'sint32':
+                return dataView.getInt32(0, fDef.littleEndian);
+            case 'uint32':
+                return dataView.getUint32(0, fDef.littleEndian);
+            case 'float32':
+                return dataView.getFloat32(0, fDef.littleEndian);
+            case 'float64':
+                return dataView.getFloat64(0, fDef.littleEndian);
         }
 
-        return uint32Rep;
+        return addEndian(fDef.littleEndian, temp);
     }
 
     if (fDef.type === 'string') {
