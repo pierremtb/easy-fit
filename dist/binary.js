@@ -77,6 +77,7 @@ function formatByType(data, type, scale, offset) {
             return scale ? data / scale + offset : data;
         default:
             if (_fit.FIT.types[type]) {
+                if(type == "sport") console.log(_fit.FIT.types[type])
                 return _fit.FIT.types[type][data];
             }
             return data;
@@ -265,10 +266,15 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
     var fields = {};
     var message = (0, _messages.getFitMessage)(messageType.globalMessageNumber);
 
+    console.log("//////------------------------///////")
     for (var _i3 = 0; _i3 < messageType.fieldDefs.length; _i3++) {
         var _fDef2 = messageType.fieldDefs[_i3];
         var data = readData(blob, _fDef2, readDataFromIndex);
 
+        var shouldLog = _fDef2["name"] == "sport"
+
+        if(shouldLog) console.log(_fDef2["name"] + " " + data)
+        if(shouldLog) console.log(" is invalid? "+isInvalidValue(data, _fDef2.type))
         if (!isInvalidValue(data, _fDef2.type)) {
             if (_fDef2.isDeveloperField) {
                 // Skip format of data if developer field
@@ -279,9 +285,14 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
                     type = _message$getAttribute2.type,
                     scale = _message$getAttribute2.scale,
                     offset = _message$getAttribute2.offset;
+                if(shouldLog) console.log(_message$getAttribute2)
 
                 if (field !== 'unknown' && field !== '' && field !== undefined) {
-                    fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+                    var thing = applyOptions(formatByType(data, type, scale, offset), field, options);
+                    if(shouldLog) console.log(data + " " + type + " " + scale + " "+ offset)
+                    if(shouldLog) console.log(formatByType(data, type, scale, offset))
+                    if(shouldLog) console.log(thing)
+                    fields[field] = thing 
                 }
             }
 
