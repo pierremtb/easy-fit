@@ -1191,7 +1191,7 @@ var FIT = exports.FIT = {
     },
     sport_bits_6: {
       0: 0,
-      1: `floor_climbing`
+      1: 'floor_climbing'
     },
     sub_sport: {
       0: 'generic',
