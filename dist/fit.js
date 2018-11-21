@@ -533,6 +533,9 @@ var FIT = exports.FIT = {
       6: { field: 'custom_target_value_high', type: 'uint32', scale: null, offset: 0, units: '' },
       7: { field: 'intensity', type: 'intensity', scale: null, offset: 0, units: '' }
     },
+    28: {
+      name: 'schedule',
+    }
     30: {
       name: 'weight_scale',
       253: { field: 'timestamp', type: 'date_time', scale: null, offset: 0, units: 's' },
@@ -1092,6 +1095,8 @@ var FIT = exports.FIT = {
       44: 'kitesurfing',
       45: 'tactical',
       46: 'jumpmaster',
+      47: 'boxing',
+      48: 'floor_climbing',
       254: 'all'
     },
     sport_bits_0: {
@@ -1159,6 +1164,10 @@ var FIT = exports.FIT = {
       32: 'tactical',
       64: 'jumpmaster'
     },
+    sport_bits_6: {
+      0: 0,
+      1: `floor_climbing`
+    },
     sub_sport: {
       0: 'generic',
       1: 'treadmill',
@@ -1209,6 +1218,17 @@ var FIT = exports.FIT = {
       46: 'gravel_cycling',
       47: 'e_bike_mountain',
       48: 'commuting',
+      49: 'mixed_surface',
+      50: 'navigate',
+      51: 'track_me',
+      52: 'map',
+      53: 'single_gas_diving',
+      54: 'multi_gas_diving',
+      55: 'gauge_diving',
+      56: 'apnea_diving',
+      57: 'apnea_hunting',
+      58: 'virtual_activity',
+      59: 'obstacle',
       254: 'all'
     },
     sport_event: {
@@ -1263,7 +1283,8 @@ var FIT = exports.FIT = {
       1: 'hour24',
       2: 'military',
       3: 'hour_12_with_seconds',
-      4: 'hour_24_with_seconds'
+      4: 'hour_24_with_seconds',
+      5: 'utc'
     },
     event: {
       0: 'timer',
@@ -1364,6 +1385,18 @@ var FIT = exports.FIT = {
       13: 'repeat_until_power_greater_than',
       14: 'power_less_than',
       15: 'power_greater_than',
+      16: 'training_peaks_tss',
+      17: 'repeat_until_power_last_lap_less_than',
+      18: 'repeat_until_max_power_last_lap_less_than',
+      19: 'power_3s_less_than',
+      20: 'power_10s_less_than',
+      21: 'power_30s_less_than',
+      22: 'power_3s_greater_than',
+      23: 'power_10s_greater_than',
+      24: 'power_30s_greater_than',
+      25: 'power_lap_less_than',
+      26: 'power_lap_greater_than',
+      27: 'repeat_until_training_peaks_tss'
       28: 'repetition_time'
     },
     wkt_step_target: {
@@ -1373,14 +1406,23 @@ var FIT = exports.FIT = {
       3: 'cadence',
       4: 'power',
       5: 'grade',
-      6: 'resistance'
+      6: 'resistance',
+      7: 'power_3s',
+      8: 'power_10s',
+      9: 'power_30s',
+      10: 'power_lap',
+      11: 'swim_stroke',
+      12: 'speed_lap',
+      13: 'heart_rate_lap'
     },
     goal: {
       0: 'time',
       1: 'distance',
       2: 'calories',
       3: 'frequency',
-      4: 'steps'
+      4: 'steps',
+      5: 'ascent',
+      6: 'active_minutes'
     },
     goal_recurrence: {
       0: 'off',
@@ -1579,6 +1621,9 @@ var FIT = exports.FIT = {
       291: 'Shapelog',
       292: 'Dabuziduo',
       293: 'Jetblack',
+      294: 'Coros',
+      295: 'Virtugo',
+      296: 'Velosense',
       5759: 'actigraphcorp'
     },
     garmin_product: {
@@ -1713,12 +1758,27 @@ var FIT = exports.FIT = {
       2327: 'hrm4_run',
       2337: 'vivo_active_hr',
       2348: 'vivo_smart_hr',
+      2368: 'vivo_move',
       2398: 'varia_vision',
       2406: 'vivo_fit3',
       2413: 'fenix3_hr',
+      2417: 'virb_ultra_30',
       2429: 'index_smart_scale',
       2431: 'fr235',
+      2432: 'fenix3_chronos',
+      2441: 'oregon7xx',
+      2444: 'rino7xx',
       2496: 'nautix',
+      2530: 'edge_820',
+      2531: 'edge_explore_820',
+      2544: 'fenix5s',
+      2547: 'd2_bravo_titanium',
+      2567: 'varia_ut800',
+      2593: 'running_dynamics_pod',
+      2604: 'fenix5x',
+      2606: 'vivo_fit_jr',
+      2691: 'fr935',
+      2697: 'fenix5',
       10007: 'sdm4',
       10014: 'edge_remote',
       20119: 'training_center',
@@ -1847,6 +1907,7 @@ var FIT = exports.FIT = {
       4: 'fitness_equipment',
       5: 'swimming',
       6: 'walking',
+      8: 'sedentary',
       254: 'all'
     },
     activity_subtype: {
@@ -1933,11 +1994,14 @@ var FIT = exports.FIT = {
       33554432: 'wifi_verification',
       67108864: 'true_up',
       134217728: 'find_my_watch',
-      268435456: 'remote_manual_sync'
+      268435456: 'remote_manual_sync',
+      536870912: 'live_track_auto_start',
+      1073741824: 'live_track_messaging', 
+      2147483648: 'instant_input'
     },
     weather_report: {
       0: 'current',
-      1: 'forecast',
+      1: 'hourly_forecast',
       2: 'daily_forecast'
     },
     weather_status: {
@@ -2101,7 +2165,11 @@ var FIT = exports.FIT = {
       32: 'right_brachioradialis',
       33: 'right_forearm_extensors',
       34: 'neck',
-      35: 'throat'
+      35: 'throat',
+      36: 'waist_mid_back',
+      37: 'waist_front',
+      38: 'waist_left',
+      39: 'waist_right'
     },
     segment_lap_status: {
       0: 'end',
