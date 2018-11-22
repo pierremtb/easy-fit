@@ -1443,7 +1443,7 @@ var FIT = exports.FIT = {
       24: 'power_30s_greater_than',
       25: 'power_lap_less_than',
       26: 'power_lap_greater_than',
-      27: 'repeat_until_training_peaks_tss'
+      27: 'repeat_until_training_peaks_tss',
       28: 'repetition_time',
       29: 'reps'
     },
