@@ -1637,7 +1637,7 @@ var FIT = exports.FIT = {
       119: 'orangetheory',
       120: 'inpeak',
       121: 'kinetic',
-      122, 'johnson_health_tech',
+      122: 'johnson_health_tech',
       123: 'polar_electro',
       124: 'seesense',
       125: 'nci_technology',
