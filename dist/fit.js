@@ -1121,6 +1121,7 @@ var FIT = exports.FIT = {
       46: 'jumpmaster',
       47: 'boxing',
       48: 'floor_climbing',
+      53: 'diving',
       254: 'all'
     },
     sport_bits_0: {
@@ -2054,7 +2055,7 @@ var FIT = exports.FIT = {
       134217728: 'find_my_watch',
       268435456: 'remote_manual_sync',
       536870912: 'live_track_auto_start',
-      1073741824: 'live_track_messaging', 
+      1073741824: 'live_track_messaging',
       2147483648: 'instant_input'
     },
     weather_report: {
