@@ -475,7 +475,18 @@ var FIT = exports.FIT = {
       73: { field: 'enhanced_speed', type: 'uint32', scale: 1000, offset: 0, units: 'm/s' },
       78: { field: 'enhanced_altitude', type: 'uint32', scale: 5, offset: -500, units: 'm' },
       81: { field: 'battery_soc', type: 'uint8', scale: 2, offset: 0, units: 'percent' },
-      82: { field: 'motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' }
+      82: { field: 'motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
+      83: { field: 'vertical_ratio', type: 'uint16', scale: null, offset: 0, units: 'percent'},
+      84: { field: 'stance_time_balance', type: 'uint16', scale: null, offset: 0, units: 'percent' },
+      85: { field: 'step_length', type: 'uint16', scale: null, offset: 0, units: 'mm' },
+      91: { field: 'absolute_pressure', type: 'uint32', scale: null, offset: 0, units: 'Pa' },
+      92: { field: 'depth', type: 'uint32', scale: null, offset: 0, units: 'm' },
+      93: { field: 'next_stop_depth', type: 'uint32', scale: null, offset: 0, units: 'm' },
+      94: { field: 'next_stop_time', type: 'uint32', scale: null, offset: 0, units: 's' },
+      95: { field: 'time_to_surface', type: 'uint32', scale: null, offset: 0, units: 's' },
+      96: { field: 'ndl_time', type: 'uint32', scale: null, offset: 0, units: 's' },
+      97: { field: 'cns_load', type: 'uint8', scale: null, offset: 0, units: 'percent' },
+      98: { field: 'n2_load', type: 'uint16', scale: null, offset: 0, units: 'percent' }
     },
     21: {
       name: 'event',
