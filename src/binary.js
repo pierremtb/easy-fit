@@ -26,15 +26,18 @@ function readData(blob, fDef, startIndex) {
             case 'sint16':
                 return dataView.getInt16(0, fDef.littleEndian);
             case 'uint16':
+            case 'uint16z':
                 return dataView.getUint16(0, fDef.littleEndian);
             case 'sint32':
                 return dataView.getInt32(0, fDef.littleEndian);
             case 'uint32':
+            case 'uint32z':
                 return dataView.getUint32(0, fDef.littleEndian);
             case 'float32':
                 return dataView.getFloat32(0, fDef.littleEndian);
             case 'float64':
                 return dataView.getFloat64(0, fDef.littleEndian);
+
         }
 
         return addEndian(fDef.littleEndian, temp);
