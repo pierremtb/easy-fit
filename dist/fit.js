@@ -640,6 +640,10 @@ var FIT = exports.FIT = {
       8: { field: 'status', type: 'bp_status', scale: null, offset: 0, units: '' },
       9: { field: 'user_profile_index', type: 'message_index', scale: null, offset: 0, units: '' }
     },
+    78: {
+      name: 'hrv',
+      0: { field: 'time', type: 'uint16', scale: 1000, offset: 0, units: 's' }
+    },
     206: {
       name: 'field_description',
       0: { field: 'developer_data_index', type: 'uint8', scale: null, offset: 0, units: '' },
