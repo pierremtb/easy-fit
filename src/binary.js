@@ -37,7 +37,6 @@ function readData(blob, fDef, startIndex) {
                 return dataView.getFloat32(0, fDef.littleEndian);
             case 'float64':
                 return dataView.getFloat64(0, fDef.littleEndian);
-
         }
 
         return addEndian(fDef.littleEndian, temp);
@@ -58,7 +57,9 @@ function readData(blob, fDef, startIndex) {
 
 function formatByType(data, type, scale, offset) {
     switch (type) {
-        case 'date_time': return new Date((data * 1000) + 631065600000);
+        case 'date_time':
+        case 'local_date_time':
+            return new Date((data * 1000) + 631065600000);
         case 'sint32':
         case 'sint16':
             return data * FIT.scConst;
@@ -85,13 +86,13 @@ function isInvalidValue(data, type) {
         case 'string': return data === 0x00;
         case 'float32': return data === 0xFFFFFFFF;
         case 'float64': return data === 0xFFFFFFFFFFFFFFFF;
-        case 'uint8z': return data === 0x00;
-        case 'uint16z': return data === 0x0000;
-        case 'uint32z': return data === 0x000000;
+        case 'uint8z': return data === 0x00; /* uint8z is a uint8 where 0 is an invalid value */
+        case 'uint16z': return data === 0x0000; /* uint16z is a uint16 where 0 is an invalid value */
+        case 'uint32z': return data === 0x000000; /* uint32z is a uint32 where 0 is an invalid value */
         case 'byte': return data === 0xFF;
         case 'sint64': return data === 0x7FFFFFFFFFFFFFFF;
         case 'uint64': return data === 0xFFFFFFFFFFFFFFFF;
-        case 'uint64z': return data === 0x0000000000000000;
+        case 'uint64z': return data === 0x0000000000000000; /* uint64z is a uint64 where 0 is an invalid value */
         default: return false;
     }
 }
