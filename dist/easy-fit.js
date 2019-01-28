@@ -86,6 +86,7 @@ var EasyFit = function () {
       var laps = [];
       var records = [];
       var events = [];
+      var hrv = [];
 
       var tempLaps = [];
       var tempRecords = [];
@@ -126,6 +127,9 @@ var EasyFit = function () {
           case 'event':
             events.push(message);
             break;
+          case 'hrv':
+            hrv.push(message);
+            break;
           case 'record':
             if (!startDate) {
               startDate = message.timestamp;
@@ -147,12 +151,14 @@ var EasyFit = function () {
       if (isCascadeNeeded) {
         fitObj.activity.sessions = sessions;
         fitObj.activity.events = events;
+        fitObj.activity.hrv = hrv;
       }
       if (!isModeCascade) {
         fitObj.sessions = sessions;
         fitObj.laps = laps;
         fitObj.records = records;
         fitObj.events = events;
+        fitObj.hrv = hrv;
       }
 
       callback(null, fitObj);
