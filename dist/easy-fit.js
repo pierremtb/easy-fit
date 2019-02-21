@@ -86,7 +86,8 @@ var EasyFit = function () {
       var laps = [];
       var records = [];
       var events = [];
-      var field_descriptions = [];
+      var devices = [];
+      var fieldDescriptions = [];
 
       var tempLaps = [];
       var tempRecords = [];
@@ -138,8 +139,11 @@ var EasyFit = function () {
             }
             break;
           case 'field_description':
-            field_descriptions.push(message);
-            break
+            fieldDescriptions.push(message);
+            break;
+          case 'device_info':
+            devices.push(message);
+            break;
           default:
             if (messageType !== '') {
               fitObj[messageType] = message;
@@ -157,7 +161,8 @@ var EasyFit = function () {
         fitObj.laps = laps;
         fitObj.records = records;
         fitObj.events = events;
-        fitObj.field_descriptions = field_descriptions;
+        fitObj.devices = devices;
+        fitObj.field_descriptions = fieldDescriptions;
       }
 
       callback(null, fitObj);

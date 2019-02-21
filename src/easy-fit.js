@@ -70,7 +70,8 @@ export default class EasyFit {
     const laps = [];
     const records = [];
     const events = [];
-    var field_descriptions = [];
+    const devices = [];
+    const fieldDescriptions = [];
 
     let tempLaps = [];
     let tempRecords = [];
@@ -120,8 +121,11 @@ export default class EasyFit {
           }
           break;
         case 'field_description':
-            field_descriptions.push(message);
-            break
+          fieldDescriptions.push(message);
+          break;
+        case 'device_info':
+          devices.push(message);
+          break;
         default:
           if (messageType !== '') {
             fitObj[messageType] = message;
@@ -139,10 +143,10 @@ export default class EasyFit {
       fitObj.laps = laps;
       fitObj.records = records;
       fitObj.events = events;
-      fitObj.field_descriptions = field_descriptions;
+      fitObj.devices = devices;
+      fitObj.field_descriptions = fieldDescriptions;
     }
 
     callback(null, fitObj);
   }
 }
-
