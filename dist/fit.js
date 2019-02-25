@@ -656,6 +656,14 @@ var FIT = exports.FIT = {
       //13: { field: 'fit_base_unit_id', type: 'uint16', scale: null, offset: 0, units: '' },
       // 14: { field: 'native_mesg_num', type: 'mesg_num', scale: null, offset: 0, units: '' },
       15: { field: 'native_field_num', type: 'uint8', scale: null, offset: 0, units: '' }
+    },
+    207: {
+      name: 'developer_data_id',
+      0: { field: 'developer_id', type: 'uint8', scale: null, offset: 0, units: '' },
+      1: { field: 'application_id', type: 'byte_array', scale: null, offset: 0, units: '' },
+      2: { field: 'manufacturer_id', type: 'manufacturer', scale: null, offset: 0, units: '' },
+      3: { field: 'developer_data_index', type: 'uint8', scale: null, offset: 0, units: '' },
+      4: { field: 'application_version', type: 'uint8', scale: null, offset: 0, units: '' }
     }
   },
   types: {

@@ -62,6 +62,14 @@ function readData(blob, fDef, startIndex) {
         return new _buffer.Buffer(_temp).toString('utf-8');
     }
 
+    if (fDef.type === 'byte_array') {
+        var _temp2 = [];
+        for (var _i2 = 0; _i2 < fDef.size; _i2++) {
+            _temp2.push(blob[startIndex + _i2]);
+        }
+        return _temp2;
+    }
+
     return blob[startIndex];
 }
 
@@ -218,8 +226,8 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
             mTypeDef.fieldDefs.push(fDef);
         }
 
-        for (var _i2 = 0; _i2 < numberOfDeveloperDataFields; _i2++) {
-            var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i2 * 3;
+        for (var _i3 = 0; _i3 < numberOfDeveloperDataFields; _i3++) {
+            var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i3 * 3;
 
             var fieldNum = blob[_fDefIndex];
             var size = blob[_fDefIndex + 1];
@@ -265,8 +273,8 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
     var fields = {};
     var message = (0, _messages.getFitMessage)(messageType.globalMessageNumber);
 
-    for (var _i3 = 0; _i3 < messageType.fieldDefs.length; _i3++) {
-        var _fDef2 = messageType.fieldDefs[_i3];
+    for (var _i4 = 0; _i4 < messageType.fieldDefs.length; _i4++) {
+        var _fDef2 = messageType.fieldDefs[_i4];
         var data = readData(blob, _fDef2, readDataFromIndex);
 
         if (!isInvalidValue(data, _fDef2.type)) {

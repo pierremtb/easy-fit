@@ -71,6 +71,7 @@ export default class EasyFit {
     const records = [];
     const events = [];
     const devices = [];
+    const applications = [];
     const fieldDescriptions = [];
 
     let tempLaps = [];
@@ -126,6 +127,9 @@ export default class EasyFit {
         case 'device_info':
           devices.push(message);
           break;
+        case 'developer_data_id':
+          applications.push(message);
+          break;
         default:
           if (messageType !== '') {
             fitObj[messageType] = message;
@@ -143,7 +147,8 @@ export default class EasyFit {
       fitObj.laps = laps;
       fitObj.records = records;
       fitObj.events = events;
-      fitObj.devices = devices;
+      fitObj.device_infos = devices;
+      fitObj.developer_data_ids = applications;
       fitObj.field_descriptions = fieldDescriptions;
     }
 
