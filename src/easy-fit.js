@@ -3,7 +3,7 @@ import { getArrayBuffer, calculateCRC, readRecord } from './binary';
 export default class EasyFit {
   constructor(options = {}) {
     this.options = {
-      force: options.force != null options.force : true,
+      force: options.force != null ? options.force : true,
       speedUnit: options.speedUnit || 'm/s',
       lengthUnit: options.lengthUnit || 'm',
       temperatureUnit: options.temperatureUnit || 'celsius',
