@@ -35,6 +35,8 @@ function readData(blob, fDef, startIndex) {
                 return dataView.getFloat32(0, fDef.littleEndian);
             case 'float64':
                 return dataView.getFloat64(0, fDef.littleEndian);
+            case 'uint16_array':
+                return Array.from(new Uint16Array(buffer));
         }
 
         return addEndian(fDef.littleEndian, temp);
@@ -70,6 +72,8 @@ function formatByType(data, type, scale, offset) {
         case 'uint32':
         case 'uint16':
             return scale ? data / scale + offset : data;
+        case 'uint16_array':
+            return data.map(dataItem =>  scale ? dataItem / scale + offset : dataItem);
         default:
             if (FIT.types[type]) {
                 return FIT.types[type][data];

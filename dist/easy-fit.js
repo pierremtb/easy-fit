@@ -86,10 +86,10 @@ var EasyFit = function () {
       var laps = [];
       var records = [];
       var events = [];
+      var hrv = [];
       var devices = [];
       var applications = [];
       var fieldDescriptions = [];
-      var hrv = [];
 
       var tempLaps = [];
       var tempRecords = [];

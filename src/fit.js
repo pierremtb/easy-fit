@@ -635,7 +635,7 @@ export const FIT = {
     },
     78: {
       name: 'hrv',
-      0: { field: 'time', type: 'uint16', scale: 1000, offset: 0, units: 's' },
+      0: { field: 'time', type: 'uint16_array', scale: 1000, offset: 0, units: 's' },
     },
     206: {
       name: 'field_description',
