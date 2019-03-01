@@ -48,7 +48,11 @@ function readData(blob, fDef, startIndex) {
             case 'float64':
                 return dataView.getFloat64(0, fDef.littleEndian);
             case 'uint16_array':
-                return Array.from(new Uint16Array(buffer));
+                var array = [];
+                for (var _i = 0; _i < fDef.size; _i += 2) {
+                    array.push(dataView.getUint16(_i, fDef.littleEndian));
+                }
+                return array;
         }
 
         return addEndian(fDef.littleEndian, temp);
@@ -56,9 +60,9 @@ function readData(blob, fDef, startIndex) {
 
     if (fDef.type === 'string') {
         var _temp = [];
-        for (var _i = 0; _i < fDef.size; _i++) {
-            if (blob[startIndex + _i]) {
-                _temp.push(blob[startIndex + _i]);
+        for (var _i2 = 0; _i2 < fDef.size; _i2++) {
+            if (blob[startIndex + _i2]) {
+                _temp.push(blob[startIndex + _i2]);
             }
         }
         return new _buffer.Buffer(_temp).toString('utf-8');
@@ -66,8 +70,8 @@ function readData(blob, fDef, startIndex) {
 
     if (fDef.type === 'byte_array') {
         var _temp2 = [];
-        for (var _i2 = 0; _i2 < fDef.size; _i2++) {
-            _temp2.push(blob[startIndex + _i2]);
+        for (var _i3 = 0; _i3 < fDef.size; _i3++) {
+            _temp2.push(blob[startIndex + _i3]);
         }
         return _temp2;
     }
@@ -232,8 +236,8 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
             mTypeDef.fieldDefs.push(fDef);
         }
 
-        for (var _i3 = 0; _i3 < numberOfDeveloperDataFields; _i3++) {
-            var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i3 * 3;
+        for (var _i4 = 0; _i4 < numberOfDeveloperDataFields; _i4++) {
+            var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i4 * 3;
 
             var fieldNum = blob[_fDefIndex];
             var size = blob[_fDefIndex + 1];
@@ -279,8 +283,8 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
     var fields = {};
     var message = (0, _messages.getFitMessage)(messageType.globalMessageNumber);
 
-    for (var _i4 = 0; _i4 < messageType.fieldDefs.length; _i4++) {
-        var _fDef2 = messageType.fieldDefs[_i4];
+    for (var _i5 = 0; _i5 < messageType.fieldDefs.length; _i5++) {
+        var _fDef2 = messageType.fieldDefs[_i5];
         var data = readData(blob, _fDef2, readDataFromIndex);
 
         if (!isInvalidValue(data, _fDef2.type)) {
