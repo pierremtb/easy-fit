@@ -17,7 +17,7 @@ var EasyFit = function () {
     _classCallCheck(this, EasyFit);
 
     this.options = {
-      force: options.force || true,
+      force: options.force != null ? options.force : true,
       speedUnit: options.speedUnit || 'm/s',
       lengthUnit: options.lengthUnit || 'm',
       temperatureUnit: options.temperatureUnit || 'celsius',
@@ -86,8 +86,10 @@ var EasyFit = function () {
       var laps = [];
       var records = [];
       var events = [];
+      var devices = [];
+      var applications = [];
+      var fieldDescriptions = [];
       var hrv = [];
-      var field_descriptions = [];
 
       var tempLaps = [];
       var tempRecords = [];
@@ -142,8 +144,14 @@ var EasyFit = function () {
             }
             break;
           case 'field_description':
-            field_descriptions.push(message);
-            break
+            fieldDescriptions.push(message);
+            break;
+          case 'device_info':
+            devices.push(message);
+            break;
+          case 'developer_data_id':
+            applications.push(message);
+            break;
           default:
             if (messageType !== '') {
               fitObj[messageType] = message;
@@ -162,7 +170,9 @@ var EasyFit = function () {
         fitObj.laps = laps;
         fitObj.records = records;
         fitObj.events = events;
-        fitObj.field_descriptions = field_descriptions;
+        fitObj.device_infos = devices;
+        fitObj.developer_data_ids = applications;
+        fitObj.field_descriptions = fieldDescriptions;
         fitObj.hrv = hrv;
       }
 

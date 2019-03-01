@@ -50,6 +50,14 @@ function readData(blob, fDef, startIndex) {
         return new Buffer(temp).toString('utf-8');
     }
 
+    if (fDef.type === 'byte_array') {
+        const temp = [];
+        for (let i = 0; i < fDef.size; i++) {
+            temp.push(blob[startIndex + i]);
+        }
+        return temp;
+    }
+
     return blob[startIndex];
 }
 

@@ -3,7 +3,7 @@ import { getArrayBuffer, calculateCRC, readRecord } from './binary';
 export default class EasyFit {
   constructor(options = {}) {
     this.options = {
-      force: options.force || true,
+      force: options.force != null ? options.force : true,
       speedUnit: options.speedUnit || 'm/s',
       lengthUnit: options.lengthUnit || 'm',
       temperatureUnit: options.temperatureUnit || 'celsius',
@@ -71,7 +71,9 @@ export default class EasyFit {
     const records = [];
     const events = [];
     const hrv = [];
-    var field_descriptions = [];
+    const devices = [];
+    const applications = [];
+    const fieldDescriptions = [];
 
     let tempLaps = [];
     let tempRecords = [];
@@ -124,8 +126,14 @@ export default class EasyFit {
           }
           break;
         case 'field_description':
-            field_descriptions.push(message);
-            break
+          fieldDescriptions.push(message);
+          break;
+        case 'device_info':
+          devices.push(message);
+          break;
+        case 'developer_data_id':
+          applications.push(message);
+          break;
         default:
           if (messageType !== '') {
             fitObj[messageType] = message;
@@ -144,11 +152,12 @@ export default class EasyFit {
       fitObj.laps = laps;
       fitObj.records = records;
       fitObj.events = events;
+      fitObj.device_infos = devices;
+      fitObj.developer_data_ids = applications;
+      fitObj.field_descriptions = fieldDescriptions;
       fitObj.hrv = hrv;
-      fitObj.field_descriptions = field_descriptions;
     }
 
     callback(null, fitObj);
   }
 }
-

@@ -654,6 +654,14 @@ export const FIT = {
       // 14: { field: 'native_mesg_num', type: 'mesg_num', scale: null, offset: 0, units: '' },
       15: { field: 'native_field_num', type: 'uint8', scale: null, offset: 0, units: '' },
     },
+    207: {
+      name: 'developer_data_id',
+      0: { field: 'developer_id', type: 'uint8', scale: null, offset: 0, units: '' },
+      1: { field: 'application_id', type: 'byte_array', scale: null, offset: 0, units: '' },
+      2: { field: 'manufacturer_id', type: 'manufacturer', scale: null, offset: 0, units: '' },
+      3: { field: 'developer_data_index', type: 'uint8', scale: null, offset: 0, units: '' },
+      4: { field: 'application_version', type: 'uint8', scale: null, offset: 0, units: '' }
+    }
   },
   types: {
     file: {
@@ -752,6 +760,16 @@ export const FIT = {
       202: 'exd_data_concept_configuration',
       206: 'field_description',
       207: 'developer_data_id',
+      208: 'magnetometer_data',
+      209: 'barometer_data',
+      210: 'one_d_sensor_calibration',
+      225: 'set',
+      227: 'stress_level',
+      258: 'dive_settings',
+      259: 'dive_gas',
+      262: 'dive_alarm',
+      264: 'exercise_title',
+      268: 'dive_summary',
       65280: 'mfg_range_min',
       65534: 'mfg_range_max',
     },
@@ -785,7 +803,13 @@ export const FIT = {
       32768: 'selected',
     },
     device_index: {
-      0: 'creator',
+      0: 'creator', // creator of the file is always device index 0
+      1: 'device1', // local, v6.00, garmin prod. edge520 (2067)
+      2: 'device2', // local, v3.00, garmin prod. 1619
+      3: 'heart_rate', // antplus
+      4: 'speed', // antplus
+      5: 'cadence', // antplus
+      6: 'device6', // antplus power?
     },
     gender: {
       0: 'female',
@@ -987,6 +1011,7 @@ export const FIT = {
     display_measure: {
       0: 'metric',
       1: 'statute',
+      2: 'nautical',
     },
     display_heart: {
       0: 'bpm',
@@ -1039,7 +1064,7 @@ export const FIT = {
       38: 'borneo_rso',
       39: 'estonian_grid',
       40: 'latvian_grid',
-      41: 'swedish_ref_99_grid',
+      41: 'swedish_ref_99_grid'
     },
     sport: {
       0: 'generic',
@@ -1089,7 +1114,9 @@ export const FIT = {
       44: 'kitesurfing',
       45: 'tactical',
       46: 'jumpmaster',
-      254: 'all',
+      47: 'boxing',
+      48: 'floor_climbing',
+      254: 'all'
     },
     sport_bits_0: {
       0: 0,
@@ -1154,7 +1181,8 @@ export const FIT = {
       8: 'windsurfing',
       16: 'kitesurfing',
       32: 'tactical',
-      64: 'jumpmaster'
+      64: 'jumpmaster',
+      128: 'boxing',
     },
     sub_sport: {
       0: 'generic',
@@ -1260,7 +1288,8 @@ export const FIT = {
       1: 'hour24',
       2: 'military',
       3: 'hour_12_with_seconds',
-      4: 'hour_24_with_seconds'
+      4: 'hour_24_with_seconds',
+      5: 'utc'
     },
     event: {
       0: 'timer',
@@ -1361,7 +1390,20 @@ export const FIT = {
       13: 'repeat_until_power_greater_than',
       14: 'power_less_than',
       15: 'power_greater_than',
-      28: 'repetition_time'
+      16: 'training_peaks_tss',
+      17: 'repeat_until_power_last_lap_less_than',
+      18: 'repeat_until_max_power_last_lap_less_than',
+      19: 'power_3s_less_than',
+      20: 'power_10s_less_than',
+      21: 'power_30s_less_than',
+      22: 'power_3s_greater_than',
+      23: 'power_10s_greater_than',
+      24: 'power_30s_greater_than',
+      25: 'power_lap_less_than',
+      26: 'power_lap_greater_than',
+      27: 'repeat_until_training_peaks_tss',
+      28: 'repetition_time',
+      29: 'reps'
     },
     wkt_step_target: {
       0: 'speed',
@@ -1370,14 +1412,23 @@ export const FIT = {
       3: 'cadence',
       4: 'power',
       5: 'grade',
-      6: 'resistance'
+      6: 'resistance',
+      7: 'power_3s',
+      8: 'power_10s',
+      9: 'power_30s',
+      10: 'power_lap',
+      11: 'swim_stroke',
+      12: 'speed_lap',
+      13: 'heart_rate_lap',
     },
     goal: {
       0: 'time',
       1: 'distance',
       2: 'calories',
       3: 'frequency',
-      4: 'steps'
+      4: 'steps',
+      5: 'ascent',
+      6: 'active_minutes',
     },
     goal_recurrence: {
       0: 'off',
@@ -1538,6 +1589,10 @@ export const FIT = {
       118: 'Waterrower',
       119: 'Orangetheory',
       120: 'Inpeak',
+      121: 'kinetic',
+      122: 'johnson_health_tech',
+      123: 'polar_electro',
+      124: 'seesense',
       255: 'development',
       257: 'healthandlife',
       258: 'lezyne',
@@ -1576,10 +1631,11 @@ export const FIT = {
       291: 'Shapelog',
       292: 'Dabuziduo',
       293: 'Jetblack',
+      294: 'coros',
       5759: 'actigraphcorp'
     },
     garmin_product: {
-      0: 0,
+      0: 'hrm_bike',
       1: 'hrm1',
       2: 'axh01',
       3: 'axb01',
@@ -1844,6 +1900,7 @@ export const FIT = {
       4: 'fitness_equipment',
       5: 'swimming',
       6: 'walking',
+      8: 'sedentary',
       254: 'all'
     },
     activity_subtype: {
@@ -1930,11 +1987,14 @@ export const FIT = {
       33554432: 'wifi_verification',
       67108864: 'true_up',
       134217728: 'find_my_watch',
-      268435456: 'remote_manual_sync'
+      268435456: 'remote_manual_sync',
+      536870912: 'live_track_auto_start',
+      1073741824: 'live_track_messaging',
+      2147483648: 'instant_input',
     },
     weather_report: {
       0: 'current',
-      1: 'forecast',
+      1: 'hourly_forecast',
       2: 'daily_forecast'
     },
     weather_status: {
@@ -2098,7 +2158,11 @@ export const FIT = {
       32: 'right_brachioradialis',
       33: 'right_forearm_extensors',
       34: 'neck',
-      35: 'throat'
+      35: 'throat',
+      36: 'waist_mid_back',
+      37: 'waist_front',
+      38: 'waist_left',
+      39: 'waist_right',
     },
     segment_lap_status: {
       0: 'end',
@@ -2165,12 +2229,14 @@ export const FIT = {
     sensor_type: {
       0: 'accelerometer',
       1: 'gyroscope',
-      2: 'compass'
+      2: 'compass',
+      3: 'barometer'
     },
     bike_light_network_config_type: {
       0: 'auto',
       4: 'individual',
-      5: 'high_visibility'
+      5: 'high_visibility',
+      6: 'trail'
     },
     comm_timeout_type: {
       0: 'wildcard_pairing_timeout',
@@ -2271,7 +2337,15 @@ export const FIT = {
       38: 'centimeter',
       39: 'enum_course_point',
       40: 'bradians',
-      41: 'enum_sport'
+      41: 'enum_sport',
+      42: 'inches_hg',
+      43: 'mm_hg',
+      44: 'mbars',
+      45: 'hecto_pascals',
+      46: 'feet_per_min',
+      47: 'meters_per_min',
+      48: 'meters_per_sec',
+      49: 'eight_cardinal'
     },
     exd_qualifiers: {
       0: 'no_qualifier',
@@ -2305,6 +2379,10 @@ export const FIT = {
       28: 'second',
       29: 'third',
       30: 'shifter',
+      31: 'last_sport',
+      32: 'moving',
+      33: 'stopped',
+      34: 'estimated_total',
       242: 'zone_9',
       243: 'zone_8',
       244: 'zone_7',
@@ -2399,6 +2477,20 @@ export const FIT = {
       80: 'navigation_location',
       81: 'compass',
       82: 'gear_combo',
+      83: 'muscle_oxygen',
+      84: 'icon',
+      85: 'compass_heading',
+      86: 'gps_heading',
+      87: 'gps_elevation',
+      88: 'anaerobic_training_effect',
+      89: 'course',
+      90: 'off_course',
+      91: 'glide_ratio',
+      92: 'vertical_distance',
+      93: 'vmg',
+      94: 'ambient_pressure',
+      95: 'pressure',
+      96: 'vam'
     },
     supported_exd_screen_layouts: {
       0: 0,
@@ -2409,7 +2501,7 @@ export const FIT = {
       16: 'half_horizontal_bottom_split',
       32: 'full_quarter_split',
       64: 'half_vertical_left_split',
-      128: 'half_horizontal_top_split',
+      128: 'half_horizontal_top_split'
     },
     fit_base_type: {
       0: 'enum',
@@ -2426,6 +2518,9 @@ export const FIT = {
       137: 'float64',
       139: 'uint16z',
       140: 'uint32z',
+      142: 'sint64',
+      143: 'uint64',
+      144: 'uint64z'
     },
     turn_type: {
       0: 'arriving_idx',
@@ -2473,6 +2568,8 @@ export const FIT = {
     },
     fit_base_unit: {
       0: 'other',
+      1: 'kilogram',
+      2: 'pound'
     },
   },
 };
