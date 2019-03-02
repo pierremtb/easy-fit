@@ -16,13 +16,13 @@ See in [examples](./examples) folder:
 
 ```javascript
 // Require the module
-var EasyFit = require('./../dist/fit-parser.js').default;
+var FitParser = require('./../dist/fit-parser.js').default;
 
 // Read a .FIT file
 var fs = require('fs');
 fs.readFile('./example.fit', function (err, content) {
 
-  // Create a EasyFit instance (options argument is optional)
+  // Create a FitParser instance (options argument is optional)
   var fitParser = new FitParser({
     force: true,
     speedUnit: 'km/h',

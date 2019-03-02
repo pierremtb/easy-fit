@@ -39,7 +39,7 @@
     "parse"
   ],
   "license": "MIT",
-  "main": "dist/easy-fit.js",
+  "main": "dist/fit-parser.js",
   "maintainers": [
     {
       "email": "jimmykane9@gmail.com",
