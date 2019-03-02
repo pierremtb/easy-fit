@@ -10,11 +10,11 @@ var _binary = require('./binary');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var EasyFit = function () {
-  function EasyFit() {
+var FitParser = function () {
+  function FitParser() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-    _classCallCheck(this, EasyFit);
+    _classCallCheck(this, FitParser);
 
     this.options = {
       force: options.force != null ? options.force : true,
@@ -26,7 +26,7 @@ var EasyFit = function () {
     };
   }
 
-  _createClass(EasyFit, [{
+  _createClass(FitParser, [{
     key: 'parse',
     value: function parse(content, callback) {
       var blob = new Uint8Array((0, _binary.getArrayBuffer)(content));
@@ -180,7 +180,7 @@ var EasyFit = function () {
     }
   }]);
 
-  return EasyFit;
+  return FitParser;
 }();
 
-exports.default = EasyFit;
+exports.default = FitParser;

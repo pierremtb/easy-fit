@@ -1,8 +1,8 @@
-import EasyFit from '../dist/easy-fit.js';
+import EasyFit from '../dist/fit-parser.js';
 import { expect } from 'chai';
 import fs from 'fs';
 
-describe('easyfit tests', function () {
+describe('fit parser tests', function () {
     it('expects to retrieve a FIT object', function (done) {
         this.timeout(5000);
         const easyFit = new EasyFit({ force: true });

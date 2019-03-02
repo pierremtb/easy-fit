@@ -1,6 +1,6 @@
 import { getArrayBuffer, calculateCRC, readRecord } from './binary';
 
-export default class EasyFit {
+export default class FitParser {
   constructor(options = {}) {
     this.options = {
       force: options.force != null ? options.force : true,
