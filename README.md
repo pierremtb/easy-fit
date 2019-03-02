@@ -1,4 +1,4 @@
-# js-fit-parser
+# fit-file-parser
 
 > Parse your .FIT files easily, directly from JS.
 > Written in ES6. (Hope to change)
