@@ -39,14 +39,14 @@
     "parse"
   ],
   "license": "MIT",
-  "main": "dist/easy-fit.js",
+  "main": "dist/fit-parser.js",
   "maintainers": [
     {
       "email": "jimmykane9@gmail.com",
       "name": "Dimitrios Kanellopoulos"
     }
   ],
-  "name": "fit-parser",
+  "name": "fit-file-parser",
   "optionalDependencies": {},
   "private": false,
   "repository": {
