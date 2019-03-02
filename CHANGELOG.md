@@ -1,7 +1,7 @@
 # Change Log
 
-<a name="1.5.2"></a>
-## [1.5.3](https://github.com/jimmykane/fit-parser/compare/v1.0.0...v1.5.3) (2019-03-01)
+<a name="1.5.4"></a>
+## [1.5.4](https://github.com/jimmykane/fit-parser/compare/v1.0.0...v1.5.3) (2019-03-01)
 * **Features**: HRV, Developer fields, devices and much more
 * **Miscellaneous**: Fix most of the issues parsing fit files
 
