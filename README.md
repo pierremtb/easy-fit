@@ -16,7 +16,7 @@ See in [examples](./examples) folder:
 
 ```javascript
 // Require the module
-var FitParser = require('./../dist/fit-parser.js').default;
+var FitParser = require('./../dist/fit-file-parser.js').default;
 
 // Read a .FIT file
 var fs = require('fs');
