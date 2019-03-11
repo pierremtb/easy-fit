@@ -161,7 +161,7 @@ var FitParser = function () {
       }
 
       if (isCascadeNeeded) {
-        fitObj.activity = fitObj.activity | {};
+        fitObj.activity = fitObj.activity || {};
         fitObj.activity.sessions = sessions;
         fitObj.activity.events = events;
         fitObj.activity.hrv = hrv;
