@@ -7,7 +7,7 @@
 ## Install
 
 ```
-$ npm install fit--file-parser --save
+$ npm install fit-file-parser --save
 ```
 
 ## How to use
