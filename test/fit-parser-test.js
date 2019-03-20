@@ -1,16 +1,16 @@
-import EasyFit from '../dist/easy-fit.js';
+import FitParser from '../dist/fit-parser.js';
 import { expect } from 'chai';
 import fs from 'fs';
 
-describe('easyfit tests', function () {
+describe('fit parser tests', function () {
     it('expects to retrieve a FIT object', function (done) {
         this.timeout(5000);
-        const easyFit = new EasyFit({ force: true });
+        const fitParser = new FitParser({ force: true });
         fs.readFile('./test/test.fit', (err, buffer) => {
             if (err) {
                 throw "Unable to read file";
             }
-            easyFit.parse(buffer, (fitError, fitObject) => {
+            fitParser.parse(buffer, (fitError, fitObject) => {
                 if (fitError) {
                     throw "Error parsing";
                 }
@@ -23,12 +23,12 @@ describe('easyfit tests', function () {
 
     it('expects longitude to be in the range -180 to +180', function (done) {
         this.timeout(5000);
-        const easyFit = new EasyFit({ force: true });
+        const fitParser = new FitParser({ force: true });
         fs.readFile('./test/test2.fit', (err, buffer) => {
             if (err) {
                 throw "Unable to read file";
             }
-            easyFit.parse(buffer, (fitError, fitObject) => {
+            fitParser.parse(buffer, (fitError, fitObject) => {
                 if (fitError) {
                     throw "Error parsing";
                 }
@@ -45,12 +45,12 @@ describe('easyfit tests', function () {
 
     it('expects fit with developer data to be parsed', function (done) {
         this.timeout(5000);
-        const easyFit = new EasyFit({ force: true });
+        const fitParser = new FitParser({ force: true });
         fs.readFile('./test/running-with-developer-data.fit', (err, buffer) => {
             if (err) {
                 throw "Unable to read file";
             }
-            easyFit.parse(buffer, (fitError, fitObject) => {
+            fitParser.parse(buffer, (fitError, fitObject) => {
                 if (fitError) {
                     throw "Error parsing";
                 }

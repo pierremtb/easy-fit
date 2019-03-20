@@ -38,15 +38,23 @@ function readData(blob, fDef, startIndex) {
             case 'sint16':
                 return dataView.getInt16(0, fDef.littleEndian);
             case 'uint16':
+            case 'uint16z':
                 return dataView.getUint16(0, fDef.littleEndian);
             case 'sint32':
                 return dataView.getInt32(0, fDef.littleEndian);
             case 'uint32':
+            case 'uint32z':
                 return dataView.getUint32(0, fDef.littleEndian);
             case 'float32':
                 return dataView.getFloat32(0, fDef.littleEndian);
             case 'float64':
                 return dataView.getFloat64(0, fDef.littleEndian);
+            case 'uint16_array':
+                var array = [];
+                for (var _i = 0; _i < fDef.size; _i += 2) {
+                    array.push(dataView.getUint16(_i, fDef.littleEndian));
+                }
+                return array;
         }
 
         return addEndian(fDef.littleEndian, temp);
@@ -54,12 +62,20 @@ function readData(blob, fDef, startIndex) {
 
     if (fDef.type === 'string') {
         var _temp = [];
-        for (var _i = 0; _i < fDef.size; _i++) {
-            if (blob[startIndex + _i]) {
-                _temp.push(blob[startIndex + _i]);
+        for (var _i2 = 0; _i2 < fDef.size; _i2++) {
+            if (blob[startIndex + _i2]) {
+                _temp.push(blob[startIndex + _i2]);
             }
         }
         return new _buffer.Buffer(_temp).toString('utf-8');
+    }
+
+    if (fDef.type === 'byte_array') {
+        var _temp2 = [];
+        for (var _i3 = 0; _i3 < fDef.size; _i3++) {
+            _temp2.push(blob[startIndex + _i3]);
+        }
+        return _temp2;
     }
 
     return blob[startIndex];
@@ -68,6 +84,7 @@ function readData(blob, fDef, startIndex) {
 function formatByType(data, type, scale, offset) {
     switch (type) {
         case 'date_time':
+        case 'local_date_time':
             return new Date(data * 1000 + 631065600000);
         case 'sint32':
         case 'sint16':
@@ -75,9 +92,12 @@ function formatByType(data, type, scale, offset) {
         case 'uint32':
         case 'uint16':
             return scale ? data / scale + offset : data;
+        case 'uint16_array':
+            return data.map(function (dataItem) {
+                return scale ? dataItem / scale + offset : dataItem;
+            });
         default:
             if (_fit.FIT.types[type]) {
-                if(type == "sport") console.log(_fit.FIT.types[type])
                 return _fit.FIT.types[type][data];
             }
             return data;
@@ -219,8 +239,8 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
             mTypeDef.fieldDefs.push(fDef);
         }
 
-        for (var _i2 = 0; _i2 < numberOfDeveloperDataFields; _i2++) {
-            var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i2 * 3;
+        for (var _i4 = 0; _i4 < numberOfDeveloperDataFields; _i4++) {
+            var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i4 * 3;
 
             var fieldNum = blob[_fDefIndex];
             var size = blob[_fDefIndex + 1];
@@ -266,15 +286,10 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
     var fields = {};
     var message = (0, _messages.getFitMessage)(messageType.globalMessageNumber);
 
-    console.log("//////------------------------///////")
-    for (var _i3 = 0; _i3 < messageType.fieldDefs.length; _i3++) {
-        var _fDef2 = messageType.fieldDefs[_i3];
+    for (var _i5 = 0; _i5 < messageType.fieldDefs.length; _i5++) {
+        var _fDef2 = messageType.fieldDefs[_i5];
         var data = readData(blob, _fDef2, readDataFromIndex);
 
-        var shouldLog = _fDef2["name"] == "sport"
-
-        if(shouldLog) console.log(_fDef2["name"] + " " + data)
-        if(shouldLog) console.log(" is invalid? "+isInvalidValue(data, _fDef2.type))
         if (!isInvalidValue(data, _fDef2.type)) {
             if (_fDef2.isDeveloperField) {
                 // Skip format of data if developer field
@@ -285,14 +300,9 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
                     type = _message$getAttribute2.type,
                     scale = _message$getAttribute2.scale,
                     offset = _message$getAttribute2.offset;
-                if(shouldLog) console.log(_message$getAttribute2)
 
                 if (field !== 'unknown' && field !== '' && field !== undefined) {
-                    var thing = applyOptions(formatByType(data, type, scale, offset), field, options);
-                    if(shouldLog) console.log(data + " " + type + " " + scale + " "+ offset)
-                    if(shouldLog) console.log(formatByType(data, type, scale, offset))
-                    if(shouldLog) console.log(thing)
-                    fields[field] = thing 
+                    fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
                 }
             }
 

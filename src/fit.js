@@ -646,7 +646,7 @@ export const FIT = {
     },
     78: {
       name: 'hrv',
-      0: { field: 'time', type: 'uint16', scale: 1000, offset: 0, units: 's' },
+      0: { field: 'time', type: 'uint16_array', scale: 1000, offset: 0, units: 's' },
     },
     206: {
       name: 'field_description',
@@ -664,6 +664,14 @@ export const FIT = {
       //13: { field: 'fit_base_unit_id', type: 'uint16', scale: null, offset: 0, units: '' },
       // 14: { field: 'native_mesg_num', type: 'mesg_num', scale: null, offset: 0, units: '' },
       15: { field: 'native_field_num', type: 'uint8', scale: null, offset: 0, units: '' },
+    },
+    207: {
+      name: 'developer_data_id',
+      0: { field: 'developer_id', type: 'uint8', scale: null, offset: 0, units: '' },
+      1: { field: 'application_id', type: 'byte_array', scale: null, offset: 0, units: '' },
+      2: { field: 'manufacturer_id', type: 'manufacturer', scale: null, offset: 0, units: '' },
+      3: { field: 'developer_data_index', type: 'uint8', scale: null, offset: 0, units: '' },
+      4: { field: 'application_version', type: 'uint8', scale: null, offset: 0, units: '' }
     },
     258: {
       name: 'dive_settings',
@@ -826,7 +834,7 @@ export const FIT = {
       208: 'magnetometer_data',
       209: 'barometer_data',
       210: 'one_d_sensor_calibration',
-      225: 'num_set',
+      225: 'set',
       227: 'stress_level',
       258: 'dive_settings',
       259: 'dive_gas',
@@ -866,7 +874,13 @@ export const FIT = {
       32768: 'selected',
     },
     device_index: {
-      0: 'creator',
+      0: 'creator', // creator of the file is always device index 0
+      1: 'device1', // local, v6.00, garmin prod. edge520 (2067)
+      2: 'device2', // local, v3.00, garmin prod. 1619
+      3: 'heart_rate', // antplus
+      4: 'speed', // antplus
+      5: 'cadence', // antplus
+      6: 'device6', // antplus power?
     },
     gender: {
       0: 'female',
@@ -1130,7 +1144,7 @@ export const FIT = {
       38: 'borneo_rso',
       39: 'estonian_grid',
       40: 'latvian_grid',
-      41: 'swedish_ref_99_grid',
+      41: 'swedish_ref_99_grid'
     },
     switch: {
       0: 'off',
@@ -1376,7 +1390,7 @@ export const FIT = {
       2: 'military',
       3: 'hour_12_with_seconds',
       4: 'hour_24_with_seconds',
-      5: 'utc',
+      5: 'utc'
     },
     backlight_mode: {
       0: 'off',
@@ -1512,7 +1526,7 @@ export const FIT = {
       26: 'power_lap_greater_than',
       27: 'repeat_until_training_peaks_tss',
       28: 'repetition_time',
-      29: 'reps',
+      29: 'reps'
     },
     wkt_step_target: {
       0: 'speed',
@@ -1752,7 +1766,7 @@ export const FIT = {
       5759: 'actigraphcorp',
     },
     garmin_product: {
-      0: 0,
+      0: 'hrm_bike',
       1: 'hrm1',
       2: 'axh01',
       3: 'axb01',
@@ -2034,7 +2048,7 @@ export const FIT = {
       5: 'swimming',
       6: 'walking',
       8: 'sedentary',
-      254: 'all',
+      254: 'all'
     },
     activity_subtype: {
       0: 'generic',
@@ -2128,7 +2142,7 @@ export const FIT = {
     weather_report: {
       0: 'current',
       1: 'hourly_forecast',
-      2: 'daily_forecast',
+      2: 'daily_forecast'
     },
     weather_status: {
       0: 'clear',
@@ -2393,13 +2407,13 @@ export const FIT = {
       0: 'accelerometer',
       1: 'gyroscope',
       2: 'compass',
-      3: 'barometer',
+      3: 'barometer'
     },
     bike_light_network_config_type: {
       0: 'auto',
       4: 'individual',
       5: 'high_visibility',
-      6: 'trail',
+      6: 'trail'
     },
     comm_timeout_type: {
       0: 'wildcard_pairing_timeout',
@@ -2515,7 +2529,7 @@ export const FIT = {
       46: 'feet_per_min',
       47: 'meters_per_min',
       48: 'meters_per_sec',
-      49: 'eight_cardinal',
+      49: 'eight_cardinal'
     },
     exd_qualifiers: {
       0: 'no_qualifier',
@@ -2660,7 +2674,7 @@ export const FIT = {
       93: 'vmg',
       94: 'ambient_pressure',
       95: 'pressure',
-      96: 'vam',
+      96: 'vam'
     },
     auto_activity_detect: {
       0: 'none',
@@ -2680,7 +2694,7 @@ export const FIT = {
       16: 'half_horizontal_bottom_split',
       32: 'full_quarter_split',
       64: 'half_vertical_left_split',
-      128: 'half_horizontal_top_split',
+      128: 'half_horizontal_top_split'
     },
     fit_base_type: {
       0: 'enum',
@@ -2699,7 +2713,7 @@ export const FIT = {
       140: 'uint32z',
       142: 'sint64',
       143: 'uint64',
-      144: 'uint64z',
+      144: 'uint64z'
     },
     turn_type: {
       0: 'arriving_idx',
@@ -2748,7 +2762,7 @@ export const FIT = {
     fit_base_unit: {
       0: 'other',
       1: 'kilogram',
-      2: 'pound',
+      2: 'pound'
     },
     set_type: {
       0: 'rest',

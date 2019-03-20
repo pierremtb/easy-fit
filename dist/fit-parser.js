@@ -10,14 +10,14 @@ var _binary = require('./binary');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var EasyFit = function () {
-  function EasyFit() {
+var FitParser = function () {
+  function FitParser() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-    _classCallCheck(this, EasyFit);
+    _classCallCheck(this, FitParser);
 
     this.options = {
-      force: options.force || true,
+      force: options.force != null ? options.force : true,
       speedUnit: options.speedUnit || 'm/s',
       lengthUnit: options.lengthUnit || 'm',
       temperatureUnit: options.temperatureUnit || 'celsius',
@@ -26,7 +26,7 @@ var EasyFit = function () {
     };
   }
 
-  _createClass(EasyFit, [{
+  _createClass(FitParser, [{
     key: 'parse',
     value: function parse(content, callback) {
       var blob = new Uint8Array((0, _binary.getArrayBuffer)(content));
@@ -87,6 +87,9 @@ var EasyFit = function () {
       var records = [];
       var events = [];
       var hrv = [];
+      var devices = [];
+      var applications = [];
+      var fieldDescriptions = [];
 
       var tempLaps = [];
       var tempRecords = [];
@@ -140,6 +143,15 @@ var EasyFit = function () {
               tempRecords.push(message);
             }
             break;
+          case 'field_description':
+            fieldDescriptions.push(message);
+            break;
+          case 'device_info':
+            devices.push(message);
+            break;
+          case 'developer_data_id':
+            applications.push(message);
+            break;
           default:
             if (messageType !== '') {
               fitObj[messageType] = message;
@@ -149,6 +161,7 @@ var EasyFit = function () {
       }
 
       if (isCascadeNeeded) {
+        fitObj.activity = fitObj.activity || {};
         fitObj.activity.sessions = sessions;
         fitObj.activity.events = events;
         fitObj.activity.hrv = hrv;
@@ -158,6 +171,9 @@ var EasyFit = function () {
         fitObj.laps = laps;
         fitObj.records = records;
         fitObj.events = events;
+        fitObj.device_infos = devices;
+        fitObj.developer_data_ids = applications;
+        fitObj.field_descriptions = fieldDescriptions;
         fitObj.hrv = hrv;
       }
 
@@ -165,7 +181,7 @@ var EasyFit = function () {
     }
   }]);
 
-  return EasyFit;
+  return FitParser;
 }();
 
-exports.default = EasyFit;
+exports.default = FitParser;

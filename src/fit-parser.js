@@ -1,9 +1,9 @@
 import { getArrayBuffer, calculateCRC, readRecord } from './binary';
 
-export default class EasyFit {
+export default class FitParser {
   constructor(options = {}) {
     this.options = {
-      force: options.force || true,
+      force: options.force != null ? options.force : true,
       speedUnit: options.speedUnit || 'm/s',
       lengthUnit: options.lengthUnit || 'm',
       temperatureUnit: options.temperatureUnit || 'celsius',
@@ -71,6 +71,9 @@ export default class EasyFit {
     const records = [];
     const events = [];
     const hrv = [];
+    const devices = [];
+    const applications = [];
+    const fieldDescriptions = [];
 
     let tempLaps = [];
     let tempRecords = [];
@@ -122,6 +125,15 @@ export default class EasyFit {
             tempRecords.push(message);
           }
           break;
+        case 'field_description':
+          fieldDescriptions.push(message);
+          break;
+        case 'device_info':
+          devices.push(message);
+          break;
+        case 'developer_data_id':
+          applications.push(message);
+          break;
         default:
           if (messageType !== '') {
             fitObj[messageType] = message;
@@ -131,6 +143,7 @@ export default class EasyFit {
     }
 
     if (isCascadeNeeded) {
+      fitObj.activity = fitObj.activity || {};
       fitObj.activity.sessions = sessions;
       fitObj.activity.events = events;
       fitObj.activity.hrv = hrv;
@@ -140,10 +153,12 @@ export default class EasyFit {
       fitObj.laps = laps;
       fitObj.records = records;
       fitObj.events = events;
+      fitObj.device_infos = devices;
+      fitObj.developer_data_ids = applications;
+      fitObj.field_descriptions = fieldDescriptions;
       fitObj.hrv = hrv;
     }
 
     callback(null, fitObj);
   }
 }
-

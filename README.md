@@ -1,13 +1,13 @@
-# easy-fit
+# fit-file-parser
 
 > Parse your .FIT files easily, directly from JS.
-> Written in ES6.
+> Written in ES6. (Hope to change)
 
 
 ## Install
 
 ```
-$ npm install easy-fit --save
+$ npm install fit-file-parser --save
 ```
 
 ## How to use
@@ -16,14 +16,14 @@ See in [examples](./examples) folder:
 
 ```javascript
 // Require the module
-var EasyFit = require('./../dist/easy-fit.js').default;
+var FitParser = require('./../dist/fit-file-parser.js').default;
 
 // Read a .FIT file
 var fs = require('fs');
 fs.readFile('./example.fit', function (err, content) {
 
-  // Create a EasyFit instance (options argument is optional)
-  var easyFit = new EasyFit({
+  // Create a FitParser instance (options argument is optional)
+  var fitParser = new FitParser({
     force: true,
     speedUnit: 'km/h',
     lengthUnit: 'km',
@@ -33,7 +33,7 @@ fs.readFile('./example.fit', function (err, content) {
   });
   
   // Parse your file
-  easyFit.parse(content, function (error, data) {
+  fitParser.parse(content, function (error, data) {
   
     // Handle result of parse method
     if (error) {
@@ -48,7 +48,7 @@ fs.readFile('./example.fit', function (err, content) {
 ```
 
 ## API Documentation
-### new EasyFit(Object _options_)
+### new FitParser(Object _options_)
 Needed to create a new instance. _options_ is optional, and is used to customize the returned object.
 
 Allowed properties :
@@ -75,10 +75,11 @@ Allowed properties :
   - `true`: Includes a `elapsed_time` field inside each `record` field, containing the elapsed time in seconds since the first record (**default**)
   - `false`
 
-### easyFit.parse(Buffer _file_, Function _callback_)
+### fitParser.parse(Buffer _file_, Function _callback_)
 _callback_ receives two arguments, the first as a error String, and the second as Object, result of parsing.
 
 ## Contributors
+All started thanks to [Pierre Jacquier](https://github.com/pierremtb)
 
 Big thanks to [Mikael Lofjärd](https://github.com/mlofjard) for [his early prototype](https://github.com/mlofjard/jsonfit).
 See [CONTRIBUTORS](./CONTRIBUTORS.md).
@@ -87,4 +88,4 @@ See [CONTRIBUTORS](./CONTRIBUTORS.md).
 
 MIT license; see [LICENSE](./LICENSE).
 
-(c) 2016 by Pierre Jacquier
+(c) 2019 Dimitrios Kanellopoulos

@@ -1,6 +1,6 @@
-import { FIT } from './fit';
-import { getFitMessage, getFitMessageBaseType } from './messages';
-import { Buffer } from 'buffer';
+import {FIT} from './fit';
+import {getFitMessage, getFitMessageBaseType} from './messages';
+import {Buffer} from 'buffer';
 
 export function addEndian(littleEndian, bytes) {
     let result = 0;
@@ -37,6 +37,12 @@ function readData(blob, fDef, startIndex) {
                 return dataView.getFloat32(0, fDef.littleEndian);
             case 'float64':
                 return dataView.getFloat64(0, fDef.littleEndian);
+            case 'uint16_array':
+                const array = [];
+                for (let i = 0; i < fDef.size; i += 2) {
+                    array.push(dataView.getUint16(i, fDef.littleEndian));
+                }
+                return array;
         }
 
         return addEndian(fDef.littleEndian, temp);
@@ -50,6 +56,14 @@ function readData(blob, fDef, startIndex) {
             }
         }
         return new Buffer(temp).toString('utf-8');
+    }
+
+    if (fDef.type === 'byte_array') {
+        const temp = [];
+        for (let i = 0; i < fDef.size; i++) {
+            temp.push(blob[startIndex + i]);
+        }
+        return temp;
     }
 
     return blob[startIndex];
@@ -66,6 +80,8 @@ function formatByType(data, type, scale, offset) {
         case 'uint32':
         case 'uint16':
             return scale ? data / scale + offset : data;
+        case 'uint16_array':
+            return data.map(dataItem => scale ? dataItem / scale + offset : dataItem);
         default:
             if (FIT.types[type]) {
                 return FIT.types[type][data];
@@ -76,24 +92,42 @@ function formatByType(data, type, scale, offset) {
 
 function isInvalidValue(data, type) {
     switch (type) {
-        case 'enum': return data === 0xFF;
-        case 'sint8': return data === 0x7F;
-        case 'uint8': return data === 0xFF;
-        case 'sint16': return data === 0x7FFF;
-        case 'uint16': return data === 0xFFFF;
-        case 'sint32': return data === 0x7FFFFFFF;
-        case 'uint32': return data === 0xFFFFFFFF;
-        case 'string': return data === 0x00;
-        case 'float32': return data === 0xFFFFFFFF;
-        case 'float64': return data === 0xFFFFFFFFFFFFFFFF;
-        case 'uint8z': return data === 0x00; /* uint8z is a uint8 where 0 is an invalid value */
-        case 'uint16z': return data === 0x0000; /* uint16z is a uint16 where 0 is an invalid value */
-        case 'uint32z': return data === 0x000000; /* uint32z is a uint32 where 0 is an invalid value */
-        case 'byte': return data === 0xFF;
-        case 'sint64': return data === 0x7FFFFFFFFFFFFFFF;
-        case 'uint64': return data === 0xFFFFFFFFFFFFFFFF;
-        case 'uint64z': return data === 0x0000000000000000; /* uint64z is a uint64 where 0 is an invalid value */
-        default: return false;
+        case 'enum':
+            return data === 0xFF;
+        case 'sint8':
+            return data === 0x7F;
+        case 'uint8':
+            return data === 0xFF;
+        case 'sint16':
+            return data === 0x7FFF;
+        case 'uint16':
+            return data === 0xFFFF;
+        case 'sint32':
+            return data === 0x7FFFFFFF;
+        case 'uint32':
+            return data === 0xFFFFFFFF;
+        case 'string':
+            return data === 0x00;
+        case 'float32':
+            return data === 0xFFFFFFFF;
+        case 'float64':
+            return data === 0xFFFFFFFFFFFFFFFF;
+        case 'uint8z':
+            return data === 0x00;
+        case 'uint16z':
+            return data === 0x0000;
+        case 'uint32z':
+            return data === 0x000000;
+        case 'byte':
+            return data === 0xFF;
+        case 'sint64':
+            return data === 0x7FFFFFFFFFFFFFFF;
+        case 'uint64':
+            return data === 0xFFFFFFFFFFFFFFFF;
+        case 'uint64z':
+            return data === 0x0000000000000000;
+        default:
+            return false;
     }
 }
 
@@ -142,7 +176,8 @@ function applyOptions(data, field, options) {
         case 'avg_temperature':
         case 'max_temperature':
             return convertTo(data, 'temperatureUnits', options.temperatureUnit);
-        default: return data;
+        default:
+            return data;
     }
 }
 
@@ -171,7 +206,7 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
         for (let i = 0; i < numberOfFields; i++) {
             const fDefIndex = startIndex + 6 + (i * 3);
             const baseType = blob[fDefIndex + 2];
-            const { field, type } = message.getAttributes(blob[fDefIndex]);
+            const {field, type} = message.getAttributes(blob[fDefIndex]);
             const fDef = {
                 type,
                 fDefNo: blob[fDefIndex],
@@ -242,7 +277,7 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
                 // Skip format of data if developer field
                 fields[fDef.name] = data;
             } else {
-                const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
+                const {field, type, scale, offset} = message.getAttributes(fDef.fDefNo);
 
                 if (field !== 'unknown' && field !== '' && field !== undefined) {
                     fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);

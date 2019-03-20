@@ -476,7 +476,7 @@ var FIT = exports.FIT = {
       78: { field: 'enhanced_altitude', type: 'uint32', scale: 5, offset: -500, units: 'm' },
       81: { field: 'battery_soc', type: 'uint8', scale: 2, offset: 0, units: 'percent' },
       82: { field: 'motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
-      83: { field: 'vertical_ratio', type: 'uint16', scale: null, offset: 0, units: 'percent'},
+      83: { field: 'vertical_ratio', type: 'uint16', scale: null, offset: 0, units: 'percent' },
       84: { field: 'stance_time_balance', type: 'uint16', scale: null, offset: 0, units: 'percent' },
       85: { field: 'step_length', type: 'uint16', scale: null, offset: 0, units: 'mm' },
       91: { field: 'absolute_pressure', type: 'uint32', scale: null, offset: 0, units: 'Pa' },
@@ -653,7 +653,7 @@ var FIT = exports.FIT = {
     },
     78: {
       name: 'hrv',
-      0: { field: 'time', type: 'uint16', scale: 1000, offset: 0, units: 's' }
+      0: { field: 'time', type: 'uint16_array', scale: 1000, offset: 0, units: 's' }
     },
     206: {
       name: 'field_description',
@@ -671,6 +671,14 @@ var FIT = exports.FIT = {
       //13: { field: 'fit_base_unit_id', type: 'uint16', scale: null, offset: 0, units: '' },
       // 14: { field: 'native_mesg_num', type: 'mesg_num', scale: null, offset: 0, units: '' },
       15: { field: 'native_field_num', type: 'uint8', scale: null, offset: 0, units: '' }
+    },
+    207: {
+      name: 'developer_data_id',
+      0: { field: 'developer_id', type: 'uint8', scale: null, offset: 0, units: '' },
+      1: { field: 'application_id', type: 'byte_array', scale: null, offset: 0, units: '' },
+      2: { field: 'manufacturer_id', type: 'manufacturer', scale: null, offset: 0, units: '' },
+      3: { field: 'developer_data_index', type: 'uint8', scale: null, offset: 0, units: '' },
+      4: { field: 'application_version', type: 'uint8', scale: null, offset: 0, units: '' }
     },
     258: {
       name: 'dive_settings',
@@ -697,7 +705,7 @@ var FIT = exports.FIT = {
       19: { field: 'heart_rate_source_type', type: 'source_type', scale: null, offset: 0, units: '' },
       20: { field: 'heart_rate_source', type: 'uint8', scale: null, offset: 0, units: '' }
     },
-    259 : {
+    259: {
       name: 'dive_gas',
       254: { field: 'message_index', type: 'message_index', scale: null, offset: '', units: '' },
       0: { field: 'helium_content', type: 'uint8', scale: null, offset: '', units: 'percent' },
@@ -717,18 +725,18 @@ var FIT = exports.FIT = {
     268: {
       name: 'dive_summary',
       253: { field: 'timestamp', type: 'date_time', scale: null, offset: 0, units: 's' },
-      0: { field: 'reference_mesg', type: 'mesg_num', scale: null, offset: 0, units: ''},
-      1: { field: 'reference_index', type: 'message_index', scale: null, offset: 0, units: ''},
-      2: { field: 'avg_depth', type: 'uint32', scale: null, offset: 0, units: 'm'},
-      3: { field: 'max_depth', type: 'uint32', scale: null, offset: 0, units: 'm'},
-      4: { field: 'surface_interval', type: 'uint32', scale: null, offset: 0, units: 's'},
-      5: { field: 'start_cns', type: 'uint8', scale: null, offset: 0, units: 'percent'},
-      6: { field: 'end_cns', type: 'uint8', scale: null, offset: 0, units: 'percent'},
-      7: { field: 'start_n2', type: 'uint16', scale: null, offset: 0, units: 'percent'},
-      8: { field: 'end_n2', type: 'uint16', scale: null, offset: 0, units: 'percent'},
-      9: { field: 'o2_toxicity', type: 'uint16', scale: null, offset: 0, units: 'OTUs'},
-      10: { field: 'dive_number', type: 'uint32', scale: null, offset: 0, units: ''},
-      11: { field: 'bottom_time', type: 'uint32', scale: null, offset: 0, units: 's'}
+      0: { field: 'reference_mesg', type: 'mesg_num', scale: null, offset: 0, units: '' },
+      1: { field: 'reference_index', type: 'message_index', scale: null, offset: 0, units: '' },
+      2: { field: 'avg_depth', type: 'uint32', scale: null, offset: 0, units: 'm' },
+      3: { field: 'max_depth', type: 'uint32', scale: null, offset: 0, units: 'm' },
+      4: { field: 'surface_interval', type: 'uint32', scale: null, offset: 0, units: 's' },
+      5: { field: 'start_cns', type: 'uint8', scale: null, offset: 0, units: 'percent' },
+      6: { field: 'end_cns', type: 'uint8', scale: null, offset: 0, units: 'percent' },
+      7: { field: 'start_n2', type: 'uint16', scale: null, offset: 0, units: 'percent' },
+      8: { field: 'end_n2', type: 'uint16', scale: null, offset: 0, units: 'percent' },
+      9: { field: 'o2_toxicity', type: 'uint16', scale: null, offset: 0, units: 'OTUs' },
+      10: { field: 'dive_number', type: 'uint32', scale: null, offset: 0, units: '' },
+      11: { field: 'bottom_time', type: 'uint32', scale: null, offset: 0, units: 's' }
     }
   },
   types: {
@@ -833,7 +841,7 @@ var FIT = exports.FIT = {
       208: 'magnetometer_data',
       209: 'barometer_data',
       210: 'one_d_sensor_calibration',
-      225: 'num_set',
+      225: 'set',
       227: 'stress_level',
       258: 'dive_settings',
       259: 'dive_gas',
@@ -873,7 +881,13 @@ var FIT = exports.FIT = {
       32768: 'selected'
     },
     device_index: {
-      0: 'creator'
+      0: 'creator', // creator of the file is always device index 0
+      1: 'device1', // local, v6.00, garmin prod. edge520 (2067)
+      2: 'device2', // local, v3.00, garmin prod. 1619
+      3: 'heart_rate', // antplus
+      4: 'speed', // antplus
+      5: 'cadence', // antplus
+      6: 'device6' // antplus power?
     },
     gender: {
       0: 'female',
@@ -1759,7 +1773,7 @@ var FIT = exports.FIT = {
       5759: 'actigraphcorp'
     },
     garmin_product: {
-      0: 0,
+      0: 'hrm_bike',
       1: 'hrm1',
       2: 'axh01',
       3: 'axb01',
@@ -2842,7 +2856,7 @@ var FIT = exports.FIT = {
       13: 'weighted_single_leg_donkey_calf_raise',
       14: 'single_leg_hip_raise_with_knee_hold',
       15: 'single_leg_standing_calf_raise',
-      16: 'dingle_leg_standing_dumbbell_calf_raise',
+      16: 'single_leg_standing_dumbbell_calf_raise',
       17: 'standing_barbell_calf_raise',
       18: 'standing_calf_raise',
       19: 'weighted_standing_calf_raise',
@@ -2920,7 +2934,7 @@ var FIT = exports.FIT = {
       12: 'cycling_russian_twist',
       13: 'weighted_cycling_russian_twist',
       14: 'elevated_feet_russian_twist',
-      15: 'weighted_elevated_feet_russian_twis',
+      15: 'weighted_elevated_feet_russian_twist',
       16: 'half_turkish_get_up',
       17: 'kettlebell_windmill',
       18: 'kneeling_ab_wheel',
@@ -3112,6 +3126,7 @@ var FIT = exports.FIT = {
       42: 'twisting_standing_dumbbell_biceps_curl',
       43: 'wide_grip_ez_bar_biceps_curl'
     },
+
     deadlift_exercise_name: {
       0: 'barbell_deadlift',
       1: 'barbell_straight_leg_deadlift',
