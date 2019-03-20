@@ -4117,6 +4117,10 @@ export const FIT = {
     dive_backlight_mode: {
       0: 'at_depth',
       1: 'always_on',
+    },
+    favero_product: {
+      10: 'assioma_uno',
+      12: 'assioma_duo',
     }
   },
 };
