@@ -74,6 +74,7 @@ export default class FitParser {
     const devices = [];
     const applications = [];
     const fieldDescriptions = [];
+    const dive_gases = [];
 
     let tempLaps = [];
     let tempRecords = [];
@@ -134,6 +135,9 @@ export default class FitParser {
         case 'developer_data_id':
           applications.push(message);
           break;
+        case 'dive_gas':
+          dive_gases.push(message);
+          break;
         default:
           if (messageType !== '') {
             fitObj[messageType] = message;
@@ -157,6 +161,7 @@ export default class FitParser {
       fitObj.developer_data_ids = applications;
       fitObj.field_descriptions = fieldDescriptions;
       fitObj.hrv = hrv;
+      fitObj.dive_gases = dive_gases;
     }
 
     callback(null, fitObj);
