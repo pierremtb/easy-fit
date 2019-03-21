@@ -1918,6 +1918,7 @@ export const FIT = {
       2606: 'vivo_fit_jr',
       2691: 'fr935',
       2697: 'fenix5',
+      2859: 'descent',
       10007: 'sdm4',
       10014: 'edge_remote',
       20119: 'training_center',
@@ -4130,6 +4131,10 @@ export const FIT = {
     dive_backlight_mode: {
       0: 'at_depth',
       1: 'always_on',
+    },
+    favero_product: {
+      10: 'assioma_uno',
+      12: 'assioma_duo',
     }
   },
 };

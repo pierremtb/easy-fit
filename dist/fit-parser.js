@@ -90,6 +90,7 @@ var FitParser = function () {
       var devices = [];
       var applications = [];
       var fieldDescriptions = [];
+      var dive_gases = [];
 
       var tempLaps = [];
       var tempRecords = [];
@@ -152,6 +153,9 @@ var FitParser = function () {
           case 'developer_data_id':
             applications.push(message);
             break;
+          case 'dive_gas':
+            dive_gases.push(message);
+            break;
           default:
             if (messageType !== '') {
               fitObj[messageType] = message;
@@ -175,6 +179,7 @@ var FitParser = function () {
         fitObj.developer_data_ids = applications;
         fitObj.field_descriptions = fieldDescriptions;
         fitObj.hrv = hrv;
+        fitObj.dive_gases = dive_gases;
       }
 
       callback(null, fitObj);
