@@ -148,7 +148,7 @@ function applyOptions(data, field, options) {
     }
 }
 
-function readRecord(blob, messageTypes, startIndex, options, startDate) {
+function readRecord(blob, messageTypes, startIndex, options, startDate, pausedTime) {
     var recordHeader = blob[startIndex];
     var localMessageType = recordHeader & 15;
 
@@ -228,6 +228,7 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
 
             if (message.name === 'record' && options.elapsedRecordField) {
                 fields.elapsed_time = (fields.timestamp - startDate) / 1000;
+                fields.timer_time = fields.elapsed_time - pausedTime;
             }
         }
 

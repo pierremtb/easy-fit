@@ -72,8 +72,8 @@ Allowed properties :
   - `true`: Continues even if they are errors (**default for now**)
   - `false`: Stops if an error occurs
 - `elapsedRecordField`: Boolean
-  - `true`: Includes a `elapsed_time` field inside each `record` field, containing the elapsed time in seconds since the first record (**default**)
-  - `false`
+  - `true`: Includes `elapsed_time`, containing the elapsed time in seconds since the first record, and `timer_time`, containing the time shown on the device, inside each `record` field
+  - `false` (**default**)
 
 ### easyFit.parse(Buffer _file_, Function _callback_)
 _callback_ receives two arguments, the first as a error String, and the second as Object, result of parsing.

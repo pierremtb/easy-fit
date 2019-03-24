@@ -117,7 +117,7 @@ function applyOptions(data, field, options) {
     }
 }
 
-export function readRecord(blob, messageTypes, startIndex, options, startDate) {
+export function readRecord(blob, messageTypes, startIndex, options, startDate, pausedTime) {
     const recordHeader = blob[startIndex];
     const localMessageType = (recordHeader & 15);
 
@@ -188,6 +188,7 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
 
             if (message.name === 'record' && options.elapsedRecordField) {
                 fields.elapsed_time = (fields.timestamp - startDate) / 1000;
+                fields.timer_time = fields.elapsed_time - pausedTime;
             }
         }
 
