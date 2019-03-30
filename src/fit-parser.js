@@ -86,12 +86,13 @@ export default class FitParser {
     const isModeCascade = this.options.mode === 'cascade';
     const isCascadeNeeded = isModeCascade || this.options.mode === 'both';
 
-    let startDate;
+    let startDate, lastStopTimestamp;
+    let pausedTime = 0;
 
     while (loopIndex < crcStart) {
       const { nextIndex,
         messageType,
-        message } = readRecord(blob, messageTypes, developerFields, loopIndex, this.options, startDate);
+        message } = readRecord(blob, messageTypes, loopIndex, this.options, startDate, pausedTime);
       loopIndex = nextIndex;
 
       switch (messageType) {
@@ -111,6 +112,13 @@ export default class FitParser {
           sessions.push(message);
           break;
         case 'event':
+          if (message.event === 'timer') {
+            if (message.event_type === 'stop_all') {
+              lastStopTimestamp = message.timestamp;
+            } else if (message.event_type === 'start' && lastStopTimestamp) {
+              pausedTime += (message.timestamp - lastStopTimestamp) / 1000;
+            }
+          }
           events.push(message);
           break;
         case 'hrv':
@@ -120,6 +128,7 @@ export default class FitParser {
           if (!startDate) {
             startDate = message.timestamp;
             message.elapsed_time = 0;
+            message.timer_time = 0;
           }
           records.push(message);
           if (isCascadeNeeded) {

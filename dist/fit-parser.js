@@ -102,10 +102,12 @@ var FitParser = function () {
       var isModeCascade = this.options.mode === 'cascade';
       var isCascadeNeeded = isModeCascade || this.options.mode === 'both';
 
-      var startDate = void 0;
+      var startDate = void 0,
+          lastStopTimestamp = void 0;
+      var pausedTime = 0;
 
       while (loopIndex < crcStart) {
-        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, developerFields, loopIndex, this.options, startDate),
+        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, loopIndex, this.options, startDate, pausedTime),
             nextIndex = _readRecord.nextIndex,
             messageType = _readRecord.messageType,
             message = _readRecord.message;
@@ -129,6 +131,13 @@ var FitParser = function () {
             sessions.push(message);
             break;
           case 'event':
+            if (message.event === 'timer') {
+              if (message.event_type === 'stop_all') {
+                lastStopTimestamp = message.timestamp;
+              } else if (message.event_type === 'start' && lastStopTimestamp) {
+                pausedTime += (message.timestamp - lastStopTimestamp) / 1000;
+              }
+            }
             events.push(message);
             break;
           case 'hrv':
@@ -138,6 +147,7 @@ var FitParser = function () {
             if (!startDate) {
               startDate = message.timestamp;
               message.elapsed_time = 0;
+              message.timer_time = 0;
             }
             records.push(message);
             if (isCascadeNeeded) {
