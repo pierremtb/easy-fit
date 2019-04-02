@@ -107,7 +107,7 @@ var FitParser = function () {
       var pausedTime = 0;
 
       while (loopIndex < crcStart) {
-        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, loopIndex, this.options, startDate, pausedTime),
+        var _readRecord = (0, _binary.readRecord)(blob, messageTypes, developerFields, loopIndex, this.options, startDate, pausedTime),
             nextIndex = _readRecord.nextIndex,
             messageType = _readRecord.messageType,
             message = _readRecord.message;

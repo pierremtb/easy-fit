@@ -181,7 +181,7 @@ function applyOptions(data, field, options) {
     }
 }
 
-export function readRecord(blob, messageTypes, startIndex, options, startDate, pausedTime) {
+export function readRecord(blob, messageTypes, developerFields, startIndex, options, startDate, pausedTime) {
     const recordHeader = blob[startIndex];
     const localMessageType = recordHeader & 15;
 

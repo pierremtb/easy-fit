@@ -195,7 +195,7 @@ function applyOptions(data, field, options) {
     }
 }
 
-function readRecord(blob, messageTypes, startIndex, options, startDate, pausedTime) {
+function readRecord(blob, messageTypes, developerFields, startIndex, options, startDate, pausedTime) {
     var recordHeader = blob[startIndex];
     var localMessageType = recordHeader & 15;
 

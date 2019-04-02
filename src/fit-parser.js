@@ -92,7 +92,7 @@ export default class FitParser {
     while (loopIndex < crcStart) {
       const { nextIndex,
         messageType,
-        message } = readRecord(blob, messageTypes, loopIndex, this.options, startDate, pausedTime);
+        message } = readRecord(blob, messageTypes, developerFields, loopIndex, this.options, startDate, pausedTime);
       loopIndex = nextIndex;
 
       switch (messageType) {
