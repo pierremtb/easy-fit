@@ -508,7 +508,7 @@ var FIT = exports.FIT = {
       name: 'device_info',
       253: { field: 'timestamp', type: 'date_time', scale: null, offset: 0, units: 's' },
       0: { field: 'device_index', type: 'device_index', scale: null, offset: 0, units: '' },
-      1: { field: 'device_type', type: 'uint8', scale: null, offset: 0, units: '' },
+      1: { field: 'device_type', type: 'antplus_device_type', scale: null, offset: 0, units: '' },
       2: { field: 'manufacturer', type: 'manufacturer', scale: null, offset: 0, units: '' },
       3: { field: 'serial_number', type: 'uint32z', scale: null, offset: 0, units: '' },
       4: { field: 'product', type: 'uint16', scale: null, offset: 0, units: '' },
@@ -881,13 +881,14 @@ var FIT = exports.FIT = {
       32768: 'selected'
     },
     device_index: {
-      0: 'creator', // creator of the file is always device index 0
-      1: 'device1', // local, v6.00, garmin prod. edge520 (2067)
-      2: 'device2', // local, v3.00, garmin prod. 1619
-      3: 'heart_rate', // antplus
-      4: 'speed', // antplus
-      5: 'cadence', // antplus
-      6: 'device6' // antplus power?
+      0: 'creator' // creator of the file is always device index 0
+      // From the data I have seen uploaded the following is not so valid so leaving out this for now
+      // 1: 'device1', // local, v6.00, garmin prod. edge520 (2067)
+      // 2: 'device2', // local, v3.00, garmin prod. 1619
+      // 3: 'heart_rate', // antplus
+      // 4: 'speed', // antplus
+      // 5: 'cadence', // antplus
+      // 6: 'device6', // antplus power?
     },
     gender: {
       0: 'female',
