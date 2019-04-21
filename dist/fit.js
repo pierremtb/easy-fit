@@ -311,7 +311,12 @@ var FIT = exports.FIT = {
       128: { field: 'enhanced_max_altitude', type: 'uint32', scale: 5, offset: -500, units: 'm' },
       129: { field: 'avg_lev_motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
       130: { field: 'max_lev_motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
-      131: { field: 'lev_battery_consumption', type: 'uint8', scale: 2, offset: 0, units: 'percent' }
+      131: { field: 'lev_battery_consumption', type: 'uint8', scale: 2, offset: 0, units: 'percent' },
+      132: { field: 'avg_vertical_ratio', type: 'uint16', scale: 100, offset: 0, units: 'percent' },
+      133: { field: 'avg_stance_time_balance', type: 'uint16', scale: 100, offset: 0, units: 'percent' },
+      134: { field: 'avg_step_length', type: 'uint16', scale: 10, offset: 0, units: 'mm' },
+      137: { field: 'total_anaerobic_effect', type: 'uint8', scale: 10, offset: 0, units: '' },
+      139: { field: 'avg_vam', type: 'uint16', scale: 1000, offset: 0, units: 'm/s' }
     },
     19: {
       name: 'lap',
@@ -416,7 +421,11 @@ var FIT = exports.FIT = {
       114: { field: 'enhanced_max_altitude', type: 'uint32', scale: 5, offset: -500, units: 'm' },
       115: { field: 'avg_lev_motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
       116: { field: 'max_lev_motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
-      117: { field: 'lev_battery_consumption', type: 'uint8', scale: 2, offset: 0, units: 'percent' }
+      117: { field: 'lev_battery_consumption', type: 'uint8', scale: 2, offset: 0, units: 'percent' },
+      118: { field: 'avg_vertical_ratio', type: 'uint16', scale: 100, offset: 0, units: 'percent' },
+      119: { field: 'avg_stance_time_balance', type: 'uint16', scale: 100, offset: 0, units: 'percent' },
+      120: { field: 'avg_step_length', type: 'uint16', scale: 10, offset: 0, units: 'mm' },
+      121: { field: 'avg_vam', type: 'uint16', scale: 1000, offset: 0, units: 'm/s' }
     },
     20: {
       name: 'record',
