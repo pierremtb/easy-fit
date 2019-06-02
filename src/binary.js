@@ -1,6 +1,6 @@
-import {FIT} from './fit';
-import {getFitMessage, getFitMessageBaseType} from './messages';
-import {Buffer} from 'buffer';
+import { FIT } from './fit';
+import { getFitMessage, getFitMessageBaseType } from './messages';
+import { Buffer } from 'buffer/';
 
 export function addEndian(littleEndian, bytes) {
     let result = 0;
@@ -206,7 +206,7 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
         for (let i = 0; i < numberOfFields; i++) {
             const fDefIndex = startIndex + 6 + (i * 3);
             const baseType = blob[fDefIndex + 2];
-            const {field, type} = message.getAttributes(blob[fDefIndex]);
+            const { field, type } = message.getAttributes(blob[fDefIndex]);
             const fDef = {
                 type,
                 fDefNo: blob[fDefIndex],
@@ -277,7 +277,7 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
                 // Skip format of data if developer field
                 fields[fDef.name] = data;
             } else {
-                const {field, type, scale, offset} = message.getAttributes(fDef.fDefNo);
+                const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
 
                 if (field !== 'unknown' && field !== '' && field !== undefined) {
                     fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
