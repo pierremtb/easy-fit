@@ -12,7 +12,7 @@ var _fit = require('./fit');
 
 var _messages = require('./messages');
 
-var _buffer = require('buffer');
+var _buffer = require('buffer/');
 
 function addEndian(littleEndian, bytes) {
     var result = 0;
