@@ -241,6 +241,9 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
                 baseTypeNo: (baseType & 15),
                 name: devDef.field_name,
                 dataType: getFitMessageBaseType(baseType & 15),
+                scale: devDef.scale || 1,
+                offset: devDef.offset || 0,
+                developerDataIndex: devDataIndex,
                 isDeveloperField: true,
             };
 
@@ -274,8 +277,13 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
 
         if (!isInvalidValue(data, fDef.type)) {
             if (fDef.isDeveloperField) {
-                // Skip format of data if developer field
-                fields[fDef.name] = data;
+
+                const field = fDef.name;
+                const type =  fDef.type;
+                const scale = fDef.scale;
+                const offset = fDef.offset;
+
+                fields[fDef.name] = applyOptions(formatByType(data, type, scale, offset), field, options);
             } else {
                 const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
 

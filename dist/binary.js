@@ -259,6 +259,9 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
                 baseTypeNo: _baseType & 15,
                 name: devDef.field_name,
                 dataType: (0, _messages.getFitMessageBaseType)(_baseType & 15),
+                scale: devDef.scale || 1,
+                offset: devDef.offset || 0,
+                developerDataIndex: devDataIndex,
                 isDeveloperField: true
             };
 
@@ -292,17 +295,22 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
 
         if (!isInvalidValue(data, _fDef2.type)) {
             if (_fDef2.isDeveloperField) {
-                // Skip format of data if developer field
-                fields[_fDef2.name] = data;
+
+                var field = _fDef2.name;
+                var type = _fDef2.type;
+                var scale = _fDef2.scale;
+                var offset = _fDef2.offset;
+
+                fields[_fDef2.name] = applyOptions(formatByType(data, type, scale, offset), field, options);
             } else {
                 var _message$getAttribute2 = message.getAttributes(_fDef2.fDefNo),
-                    field = _message$getAttribute2.field,
-                    type = _message$getAttribute2.type,
-                    scale = _message$getAttribute2.scale,
-                    offset = _message$getAttribute2.offset;
+                    _field = _message$getAttribute2.field,
+                    _type = _message$getAttribute2.type,
+                    _scale = _message$getAttribute2.scale,
+                    _offset = _message$getAttribute2.offset;
 
-                if (field !== 'unknown' && field !== '' && field !== undefined) {
-                    fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+                if (_field !== 'unknown' && _field !== '' && _field !== undefined) {
+                    fields[_field] = applyOptions(formatByType(data, _type, _scale, _offset), _field, options);
                 }
             }
 
