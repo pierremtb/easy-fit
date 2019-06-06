@@ -222,32 +222,40 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
         }
 
         for (let i = 0; i < numberOfDeveloperDataFields; i++) {
-            const fDefIndex = startIndex + 6 + (numberOfFields * 3) + 1 + (i * 3);
+            // If we fail to parse then try catch
+            try {
+                const fDefIndex = startIndex + 6 + (numberOfFields * 3) + 1 + (i * 3);
 
-            const fieldNum = blob[fDefIndex];
-            const size = blob[fDefIndex + 1];
-            const devDataIndex = blob[fDefIndex + 2];
+                const fieldNum = blob[fDefIndex];
+                const size = blob[fDefIndex + 1];
+                const devDataIndex = blob[fDefIndex + 2];
 
-            const devDef = developerFields[devDataIndex][fieldNum];
+                const devDef = developerFields[devDataIndex][fieldNum];
 
-            const baseType = devDef.fit_base_type_id;
+                const baseType = devDef.fit_base_type_id;
 
-            const fDef = {
-                type: FIT.types.fit_base_type[baseType],
-                fDefNo: fieldNum,
-                size: size,
-                endianAbility: (baseType & 128) === 128,
-                littleEndian: lEnd,
-                baseTypeNo: (baseType & 15),
-                name: devDef.field_name,
-                dataType: getFitMessageBaseType(baseType & 15),
-                scale: devDef.scale || 1,
-                offset: devDef.offset || 0,
-                developerDataIndex: devDataIndex,
-                isDeveloperField: true,
-            };
+                const fDef = {
+                    type: FIT.types.fit_base_type[baseType],
+                    fDefNo: fieldNum,
+                    size: size,
+                    endianAbility: (baseType & 128) === 128,
+                    littleEndian: lEnd,
+                    baseTypeNo: (baseType & 15),
+                    name: devDef.field_name,
+                    dataType: getFitMessageBaseType(baseType & 15),
+                    scale: devDef.scale || 1,
+                    offset: devDef.offset || 0,
+                    developerDataIndex: devDataIndex,
+                    isDeveloperField: true,
+                };
 
-            mTypeDef.fieldDefs.push(fDef);
+                mTypeDef.fieldDefs.push(fDef);
+            }catch (e) {
+                if (options.force){
+                    continue;
+                }
+                throw e;
+            }
         }
 
         messageTypes[localMessageType] = mTypeDef;
