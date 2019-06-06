@@ -269,7 +269,6 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
 
                 mTypeDef.fieldDefs.push(_fDef);
             } catch (e) {
-                debugger;
                 if (options.force) {
                     continue;
                 }
