@@ -12,7 +12,7 @@ export function addEndian(littleEndian, bytes) {
     return result;
 }
 
-function readData(blob, fDef, startIndex) {
+function readData(blob, fDef, startIndex, options) {
     if (fDef.endianAbility === true) {
         const temp = [];
         for (let i = 0; i < fDef.size; i++) {
@@ -22,27 +22,33 @@ function readData(blob, fDef, startIndex) {
         var buffer = new Uint8Array(temp).buffer;
         var dataView = new DataView(buffer);
 
-        switch (fDef.type) {
-            case 'sint16':
-                return dataView.getInt16(0, fDef.littleEndian);
-            case 'uint16':
-            case 'uint16z':
-                return dataView.getUint16(0, fDef.littleEndian);
-            case 'sint32':
-                return dataView.getInt32(0, fDef.littleEndian);
-            case 'uint32':
-            case 'uint32z':
-                return dataView.getUint32(0, fDef.littleEndian);
-            case 'float32':
-                return dataView.getFloat32(0, fDef.littleEndian);
-            case 'float64':
-                return dataView.getFloat64(0, fDef.littleEndian);
-            case 'uint16_array':
-                const array = [];
-                for (let i = 0; i < fDef.size; i += 2) {
-                    array.push(dataView.getUint16(i, fDef.littleEndian));
-                }
-                return array;
+        try {
+            switch (fDef.type) {
+                case 'sint16':
+                    return dataView.getInt16(0, fDef.littleEndian);
+                case 'uint16':
+                case 'uint16z':
+                    return dataView.getUint16(0, fDef.littleEndian);
+                case 'sint32':
+                    return dataView.getInt32(0, fDef.littleEndian);
+                case 'uint32':
+                case 'uint32z':
+                    return dataView.getUint32(0, fDef.littleEndian);
+                case 'float32':
+                    return dataView.getFloat32(0, fDef.littleEndian);
+                case 'float64':
+                    return dataView.getFloat64(0, fDef.littleEndian);
+                case 'uint16_array':
+                    const array = [];
+                    for (let i = 0; i < fDef.size; i += 2) {
+                        array.push(dataView.getUint16(i, fDef.littleEndian));
+                    }
+                    return array;
+            }
+        }catch (e) {
+            if (!options.force){
+                throw e;
+            }
         }
 
         return addEndian(fDef.littleEndian, temp);
@@ -281,7 +287,7 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
 
     for (let i = 0; i < messageType.fieldDefs.length; i++) {
         const fDef = messageType.fieldDefs[i];
-        const data = readData(blob, fDef, readDataFromIndex);
+        const data = readData(blob, fDef, readDataFromIndex, options);
 
         if (!isInvalidValue(data, fDef.type)) {
             if (fDef.isDeveloperField) {
