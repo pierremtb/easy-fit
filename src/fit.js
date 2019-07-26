@@ -27,9 +27,9 @@ export const FIT = {
         offset: -273.15,
       },
       fahrenheit: {
-        multiplier: 1,
-        offset: 0,
-      },
+        multiplier: 9/5,
+        offset: 32
+      }
     },
   },
   messages: {
