@@ -103,10 +103,31 @@ function formatByType(data, type, scale, offset) {
                 return scale ? dataItem / scale + offset : dataItem;
             });
         default:
-            if (_fit.FIT.types[type]) {
+            if (!_fit.FIT.types[type]) {
+                return data;
+            }
+            // Quick check for a mask
+            var values = []
+            for (var key in _fit.FIT.types[type]) {
+                if (_fit.FIT.types[type].hasOwnProperty(key)) {
+                    values.push(_fit.FIT.types[type][key])
+                }
+            }
+
+            if (values.indexOf('mask') === -1){
                 return _fit.FIT.types[type][data];
             }
-            return data;
+            var dataItem = {};
+            for (var key in _fit.FIT.types[type]) {
+                if (_fit.FIT.types[type].hasOwnProperty(key)) {
+                    if (_fit.FIT.types[type][key] === 'mask'){
+                        dataItem.value = data & key
+                    }else{
+                        dataItem[_fit.FIT.types[type][key]] = !!((data & key) >> 7) // Not sure if we need the >> 7 and casting to boolean but from all the masked props of fields so far this seems to be the case
+                    }
+                }
+            }
+            return dataItem;
     }
 }
 

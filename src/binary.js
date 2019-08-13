@@ -89,10 +89,30 @@ function formatByType(data, type, scale, offset) {
         case 'uint16_array':
             return data.map(dataItem => scale ? dataItem / scale + offset : dataItem);
         default:
-            if (FIT.types[type]) {
+            if (!FIT.types[type]) {
+                return data;
+            }
+            // Quick check for a mask
+            var values = [];
+            for (var key in FIT.types[type]) {
+                if (FIT.types[type].hasOwnProperty(key)) {
+                    values.push(FIT.types[type][key])
+                }
+            }
+            if (values.indexOf('mask') === -1){
                 return FIT.types[type][data];
             }
-            return data;
+            var dataItem = {};
+            for (var key in FIT.types[type]) {
+                if (FIT.types[type].hasOwnProperty(key)) {
+                    if (FIT.types[type][key] === 'mask'){
+                        dataItem.value = data & key
+                    }else{
+                        dataItem[FIT.types[type][key]] = !!((data & key) >> 7) // Not sure if we need the >> 7 and casting to boolean but from all the masked props of fields so far this seems to be the case
+                    }
+                }
+            }
+            return dataItem;
     }
 }
 
