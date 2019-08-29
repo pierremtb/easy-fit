@@ -478,7 +478,7 @@ export const FIT = {
       78: { field: 'enhanced_altitude', type: 'uint32', scale: 5, offset: -500, units: 'm' },
       81: { field: 'battery_soc', type: 'uint8', scale: 2, offset: 0, units: 'percent' },
       82: { field: 'motor_power', type: 'uint16', scale: null, offset: 0, units: 'watts' },
-      83: { field: 'vertical_ratio', type: 'uint16', scale: null, offset: 0, units: 'percent'},
+      83: { field: 'vertical_ratio', type: 'uint16', scale: 100, offset: 0, units: 'percent'},
       84: { field: 'stance_time_balance', type: 'uint16', scale: 100, offset: 0, units: 'percent' },
       85: { field: 'step_length', type: 'uint16', scale: null, offset: 0, units: 'mm' },
       91: { field: 'absolute_pressure', type: 'uint32', scale: null, offset: 0, units: 'Pa' },
