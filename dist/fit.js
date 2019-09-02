@@ -451,7 +451,7 @@ var FIT = exports.FIT = {
       29: { field: 'accumulated_power', type: 'uint32', scale: null, offset: 0, units: 'watts' },
       30: { field: 'left_right_balance', type: 'left_right_balance', scale: null, offset: 0, units: '' },
       31: { field: 'gps_accuracy', type: 'uint8', scale: null, offset: 0, units: 'm' },
-      32: { field: 'vertical_speed', type: 'uint16', scale: 1000, offset: 0, units: 'm/s' },
+      32: { field: 'vertical_speed', type: 'sint16', scale: 1000, offset: 0, units: 'm/s' },
       33: { field: 'calories', type: 'uint16', scale: null, offset: 0, units: 'kcal' },
       39: { field: 'vertical_oscillation', type: 'uint16', scale: 10, offset: 0, units: 'mm' },
       40: { field: 'stance_time_percent', type: 'uint16', scale: 100, offset: 0, units: 'percent' },

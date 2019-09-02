@@ -81,8 +81,8 @@ function formatByType(data, type, scale, offset) {
         case 'local_date_time':
             return new Date((data * 1000) + 631065600000);
         case 'sint32':
-        case 'sint16':
             return data * FIT.scConst;
+        case 'sint16':
         case 'uint32':
         case 'uint16':
             return scale ? data / scale + offset : data;
