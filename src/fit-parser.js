@@ -1,9 +1,9 @@
 import { getArrayBuffer, calculateCRC, readRecord } from './binary';
 
-export default class EasyFit {
+export default class FitParser {
   constructor(options = {}) {
     this.options = {
-      force: options.force || true,
+      force: options.force != null ? options.force : true,
       speedUnit: options.speedUnit || 'm/s',
       lengthUnit: options.lengthUnit || 'm',
       temperatureUnit: options.temperatureUnit || 'celsius',
@@ -70,23 +70,31 @@ export default class EasyFit {
     const laps = [];
     const records = [];
     const events = [];
+    const hrv = [];
+    const devices = [];
+    const applications = [];
+    const fieldDescriptions = [];
+    const dive_gases = [];
 
     let tempLaps = [];
     let tempRecords = [];
 
     let loopIndex = headerLength;
     const messageTypes = [];
+    const developerFields = [];
 
     const isModeCascade = this.options.mode === 'cascade';
     const isCascadeNeeded = isModeCascade || this.options.mode === 'both';
 
-    let startDate;
+    let startDate, lastStopTimestamp;
+    let pausedTime = 0;
 
     while (loopIndex < crcStart) {
       const { nextIndex,
         messageType,
-        message } = readRecord(blob, messageTypes, loopIndex, this.options, startDate);
+        message } = readRecord(blob, messageTypes, developerFields, loopIndex, this.options, startDate, pausedTime);
       loopIndex = nextIndex;
+
       switch (messageType) {
         case 'lap':
           if (isCascadeNeeded) {
@@ -104,17 +112,40 @@ export default class EasyFit {
           sessions.push(message);
           break;
         case 'event':
+          if (message.event === 'timer') {
+            if (message.event_type === 'stop_all') {
+              lastStopTimestamp = message.timestamp;
+            } else if (message.event_type === 'start' && lastStopTimestamp) {
+              pausedTime += (message.timestamp - lastStopTimestamp) / 1000;
+            }
+          }
           events.push(message);
+          break;
+        case 'hrv':
+          hrv.push(message);
           break;
         case 'record':
           if (!startDate) {
             startDate = message.timestamp;
             message.elapsed_time = 0;
+            message.timer_time = 0;
           }
           records.push(message);
           if (isCascadeNeeded) {
             tempRecords.push(message);
           }
+          break;
+        case 'field_description':
+          fieldDescriptions.push(message);
+          break;
+        case 'device_info':
+          devices.push(message);
+          break;
+        case 'developer_data_id':
+          applications.push(message);
+          break;
+        case 'dive_gas':
+          dive_gases.push(message);
           break;
         default:
           if (messageType !== '') {
@@ -125,17 +156,23 @@ export default class EasyFit {
     }
 
     if (isCascadeNeeded) {
+      fitObj.activity = fitObj.activity || {};
       fitObj.activity.sessions = sessions;
       fitObj.activity.events = events;
+      fitObj.activity.hrv = hrv;
     }
     if (!isModeCascade) {
       fitObj.sessions = sessions;
       fitObj.laps = laps;
       fitObj.records = records;
       fitObj.events = events;
+      fitObj.device_infos = devices;
+      fitObj.developer_data_ids = applications;
+      fitObj.field_descriptions = fieldDescriptions;
+      fitObj.hrv = hrv;
+      fitObj.dive_gases = dive_gases;
     }
 
     callback(null, fitObj);
   }
 }
-

@@ -12,6 +12,8 @@ var _fit = require('./fit');
 
 var _messages = require('./messages');
 
+var _buffer = require('buffer/');
+
 function addEndian(littleEndian, bytes) {
     var result = 0;
     if (!littleEndian) bytes.reverse();
@@ -22,38 +24,110 @@ function addEndian(littleEndian, bytes) {
     return result;
 }
 
-function readData(blob, fDef, startIndex) {
+function readData(blob, fDef, startIndex, options) {
     if (fDef.endianAbility === true) {
         var temp = [];
         for (var i = 0; i < fDef.size; i++) {
             temp.push(blob[startIndex + i]);
         }
-        var uint32Rep = addEndian(fDef.littleEndian, temp);
 
-        if (fDef.type === 'sint32') {
-            return uint32Rep >> 0;
+        var buffer = new Uint8Array(temp).buffer;
+        var dataView = new DataView(buffer);
+
+        try {
+            switch (fDef.type) {
+                case 'sint16':
+                    return dataView.getInt16(0, fDef.littleEndian);
+                case 'uint16':
+                case 'uint16z':
+                    return dataView.getUint16(0, fDef.littleEndian);
+                case 'sint32':
+                    return dataView.getInt32(0, fDef.littleEndian);
+                case 'uint32':
+                case 'uint32z':
+                    return dataView.getUint32(0, fDef.littleEndian);
+                case 'float32':
+                    return dataView.getFloat32(0, fDef.littleEndian);
+                case 'float64':
+                    return dataView.getFloat64(0, fDef.littleEndian);
+                case 'uint16_array':
+                    var array = [];
+                    for (var _i = 0; _i < fDef.size; _i += 2) {
+                        array.push(dataView.getUint16(_i, fDef.littleEndian));
+                    }
+                    return array;
+            }
+        } catch (e) {
+            if (!options.force) {
+                throw e;
+            }
         }
 
-        return uint32Rep;
+        return addEndian(fDef.littleEndian, temp);
     }
+
+    if (fDef.type === 'string') {
+        var _temp = [];
+        for (var _i2 = 0; _i2 < fDef.size; _i2++) {
+            if (blob[startIndex + _i2]) {
+                _temp.push(blob[startIndex + _i2]);
+            }
+        }
+        return new _buffer.Buffer(_temp).toString('utf-8');
+    }
+
+    if (fDef.type === 'byte_array') {
+        var _temp2 = [];
+        for (var _i3 = 0; _i3 < fDef.size; _i3++) {
+            _temp2.push(blob[startIndex + _i3]);
+        }
+        return _temp2;
+    }
+
     return blob[startIndex];
 }
 
 function formatByType(data, type, scale, offset) {
     switch (type) {
         case 'date_time':
+        case 'local_date_time':
             return new Date(data * 1000 + 631065600000);
         case 'sint32':
-        case 'sint16':
             return data * _fit.FIT.scConst;
+        case 'sint16':
         case 'uint32':
         case 'uint16':
             return scale ? data / scale + offset : data;
+        case 'uint16_array':
+            return data.map(function (dataItem) {
+                return scale ? dataItem / scale + offset : dataItem;
+            });
         default:
-            if (_fit.FIT.types[type]) {
+            if (!_fit.FIT.types[type]) {
+                return data;
+            }
+            // Quick check for a mask
+            var values = []
+            for (var key in _fit.FIT.types[type]) {
+                if (_fit.FIT.types[type].hasOwnProperty(key)) {
+                    values.push(_fit.FIT.types[type][key])
+                }
+            }
+
+            if (values.indexOf('mask') === -1){
                 return _fit.FIT.types[type][data];
             }
-            return data;
+            var dataItem = {};
+            for (var key in _fit.FIT.types[type]) {
+                if (_fit.FIT.types[type].hasOwnProperty(key)) {
+                    if (_fit.FIT.types[type][key] === 'mask'){
+                        dataItem.value = data & key
+                    }else{
+                        dataItem[_fit.FIT.types[type][key]] = !!((data & key) >> 7) // Not sure if we need the >> 7 and casting to boolean but from all the masked props of fields so far this seems to be the case
+                    }
+                }
+            }
+            return dataItem;
     }
 }
 
@@ -67,7 +141,7 @@ function isInvalidValue(data, type) {
             return data === 0xFF;
         case 'sint16':
             return data === 0x7FFF;
-        case 'unit16':
+        case 'uint16':
             return data === 0xFFFF;
         case 'sint32':
             return data === 0x7FFFFFFF;
@@ -148,7 +222,7 @@ function applyOptions(data, field, options) {
     }
 }
 
-function readRecord(blob, messageTypes, startIndex, options, startDate) {
+function readRecord(blob, messageTypes, developerFields, startIndex, options, startDate, pausedTime) {
     var recordHeader = blob[startIndex];
     var localMessageType = recordHeader & 15;
 
@@ -156,17 +230,21 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
         // is definition message
         // startIndex + 1 is reserved
 
+        var hasDeveloperData = (recordHeader & 32) === 32;
         var lEnd = blob[startIndex + 2] === 0;
+        var numberOfFields = blob[startIndex + 5];
+        var numberOfDeveloperDataFields = hasDeveloperData ? blob[startIndex + 5 + numberOfFields * 3 + 1] : 0;
+
         var mTypeDef = {
             littleEndian: lEnd,
             globalMessageNumber: addEndian(lEnd, [blob[startIndex + 3], blob[startIndex + 4]]),
-            numberOfFields: blob[startIndex + 5],
+            numberOfFields: numberOfFields + numberOfDeveloperDataFields,
             fieldDefs: []
         };
 
         var _message = (0, _messages.getFitMessage)(mTypeDef.globalMessageNumber);
 
-        for (var i = 0; i < mTypeDef.numberOfFields; i++) {
+        for (var i = 0; i < numberOfFields; i++) {
             var fDefIndex = startIndex + 6 + i * 3;
             var baseType = blob[fDefIndex + 2];
 
@@ -187,21 +265,56 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
 
             mTypeDef.fieldDefs.push(fDef);
         }
+
+        for (var _i4 = 0; _i4 < numberOfDeveloperDataFields; _i4++) {
+            // If we fail to parse then try catch
+            try {
+                var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i4 * 3;
+
+                var fieldNum = blob[_fDefIndex];
+                var size = blob[_fDefIndex + 1];
+                var devDataIndex = blob[_fDefIndex + 2];
+
+                var devDef = developerFields[devDataIndex][fieldNum];
+
+                var _baseType = devDef.fit_base_type_id;
+
+                var _fDef = {
+                    type: _fit.FIT.types.fit_base_type[_baseType],
+                    fDefNo: fieldNum,
+                    size: size,
+                    endianAbility: (_baseType & 128) === 128,
+                    littleEndian: lEnd,
+                    baseTypeNo: _baseType & 15,
+                    name: devDef.field_name,
+                    dataType: (0, _messages.getFitMessageBaseType)(_baseType & 15),
+                    scale: devDef.scale || 1,
+                    offset: devDef.offset || 0,
+                    developerDataIndex: devDataIndex,
+                    isDeveloperField: true
+                };
+
+                mTypeDef.fieldDefs.push(_fDef);
+            } catch (e) {
+                if (options.force) {
+                    continue;
+                }
+                throw e;
+            }
+        }
+
         messageTypes[localMessageType] = mTypeDef;
 
+        var nextIndex = startIndex + 6 + mTypeDef.numberOfFields * 3;
+        var nextIndexWithDeveloperData = nextIndex + 1;
+
         return {
-            messageType: 'fieldDescription',
-            nextIndex: startIndex + 6 + mTypeDef.numberOfFields * 3
+            messageType: 'definition',
+            nextIndex: hasDeveloperData ? nextIndexWithDeveloperData : nextIndex
         };
     }
 
-    var messageType = void 0;
-
-    if (messageTypes[localMessageType]) {
-        messageType = messageTypes[localMessageType];
-    } else {
-        messageType = messageTypes[0];
-    }
+    var messageType = messageTypes[localMessageType] || messageTypes[0];
 
     // TODO: handle compressed header ((recordHeader & 128) == 128)
 
@@ -211,28 +324,44 @@ function readRecord(blob, messageTypes, startIndex, options, startDate) {
     var fields = {};
     var message = (0, _messages.getFitMessage)(messageType.globalMessageNumber);
 
-    for (var _i = 0; _i < messageType.fieldDefs.length; _i++) {
-        var _fDef = messageType.fieldDefs[_i];
-        var data = readData(blob, _fDef, readDataFromIndex);
+    for (var _i5 = 0; _i5 < messageType.fieldDefs.length; _i5++) {
+        var _fDef2 = messageType.fieldDefs[_i5];
+        var data = readData(blob, _fDef2, readDataFromIndex, options);
 
-        if (!isInvalidValue(data, _fDef.type)) {
-            var _message$getAttribute2 = message.getAttributes(_fDef.fDefNo),
-                field = _message$getAttribute2.field,
-                type = _message$getAttribute2.type,
-                scale = _message$getAttribute2.scale,
-                offset = _message$getAttribute2.offset;
+        if (!isInvalidValue(data, _fDef2.type)) {
+            if (_fDef2.isDeveloperField) {
 
-            if (field !== 'unknown' && field !== '' && field !== undefined) {
-                fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+                var field = _fDef2.name;
+                var type = _fDef2.type;
+                var scale = _fDef2.scale;
+                var offset = _fDef2.offset;
+
+                fields[_fDef2.name] = applyOptions(formatByType(data, type, scale, offset), field, options);
+            } else {
+                var _message$getAttribute2 = message.getAttributes(_fDef2.fDefNo),
+                    _field = _message$getAttribute2.field,
+                    _type = _message$getAttribute2.type,
+                    _scale = _message$getAttribute2.scale,
+                    _offset = _message$getAttribute2.offset;
+
+                if (_field !== 'unknown' && _field !== '' && _field !== undefined) {
+                    fields[_field] = applyOptions(formatByType(data, _type, _scale, _offset), _field, options);
+                }
             }
 
             if (message.name === 'record' && options.elapsedRecordField) {
                 fields.elapsed_time = (fields.timestamp - startDate) / 1000;
+                fields.timer_time = fields.elapsed_time - pausedTime;
             }
         }
 
-        readDataFromIndex += _fDef.size;
-        messageSize += _fDef.size;
+        readDataFromIndex += _fDef2.size;
+        messageSize += _fDef2.size;
+    }
+
+    if (message.name === 'field_description') {
+        developerFields[fields.developer_data_index] = developerFields[fields.developer_data_index] || [];
+        developerFields[fields.developer_data_index][fields.field_definition_number] = fields;
     }
 
     var result = {

@@ -1,10 +1,10 @@
-var EasyFit = require('./../dist/easy-fit.js').default;
+var FitParser = require('./../dist/fit-parser.js').default;
 var fs = require('fs');
 
 var file = process.argv[2];
 
 fs.readFile(file, function (err, content) {
-  var easyFit = new EasyFit({
+  var fitParser = new FitParser({
     force: true,
     speedUnit: 'km/h',
     lengthUnit: 'm',
@@ -13,7 +13,7 @@ fs.readFile(file, function (err, content) {
     mode: 'list',
   });
 
-  easyFit.parse(content, function (error, data) {
+  fitParser.parse(content, function (error, data) {
     if (error) {
       console.log(error);
     } else {

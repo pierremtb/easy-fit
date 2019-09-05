@@ -9,12 +9,12 @@ var config = {
   paths: {
     js: {
       src: 'src/**/*.js',
-      dist: 'dist/'
+      dist: 'dist/',
     },
     test: {
       src: 'test/**/*.js',
       dist: 'test-dist/',
-      run: 'test-dist/**/*.js'
+      run: 'test-dist/**/*.js',
     }
   }
 };

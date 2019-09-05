@@ -1,5 +1,6 @@
 import { FIT } from './fit';
 import { getFitMessage, getFitMessageBaseType } from './messages';
+import { Buffer } from 'buffer/';
 
 export function addEndian(littleEndian, bytes) {
     let result = 0;
@@ -11,62 +12,150 @@ export function addEndian(littleEndian, bytes) {
     return result;
 }
 
-function readData(blob, fDef, startIndex) {
+function readData(blob, fDef, startIndex, options) {
     if (fDef.endianAbility === true) {
         const temp = [];
         for (let i = 0; i < fDef.size; i++) {
             temp.push(blob[startIndex + i]);
         }
-        const uint32Rep = addEndian(fDef.littleEndian, temp);
 
-        if (fDef.type === 'sint32') {
-            return (uint32Rep >> 0);
+        var buffer = new Uint8Array(temp).buffer;
+        var dataView = new DataView(buffer);
+
+        try {
+            switch (fDef.type) {
+                case 'sint16':
+                    return dataView.getInt16(0, fDef.littleEndian);
+                case 'uint16':
+                case 'uint16z':
+                    return dataView.getUint16(0, fDef.littleEndian);
+                case 'sint32':
+                    return dataView.getInt32(0, fDef.littleEndian);
+                case 'uint32':
+                case 'uint32z':
+                    return dataView.getUint32(0, fDef.littleEndian);
+                case 'float32':
+                    return dataView.getFloat32(0, fDef.littleEndian);
+                case 'float64':
+                    return dataView.getFloat64(0, fDef.littleEndian);
+                case 'uint16_array':
+                    const array = [];
+                    for (let i = 0; i < fDef.size; i += 2) {
+                        array.push(dataView.getUint16(i, fDef.littleEndian));
+                    }
+                    return array;
+            }
+        }catch (e) {
+            if (!options.force){
+                throw e;
+            }
         }
 
-        return uint32Rep;
+        return addEndian(fDef.littleEndian, temp);
     }
+
+    if (fDef.type === 'string') {
+        const temp = [];
+        for (let i = 0; i < fDef.size; i++) {
+            if (blob[startIndex + i]) {
+                temp.push(blob[startIndex + i]);
+            }
+        }
+        return new Buffer(temp).toString('utf-8');
+    }
+
+    if (fDef.type === 'byte_array') {
+        const temp = [];
+        for (let i = 0; i < fDef.size; i++) {
+            temp.push(blob[startIndex + i]);
+        }
+        return temp;
+    }
+
     return blob[startIndex];
 }
 
 function formatByType(data, type, scale, offset) {
     switch (type) {
-        case 'date_time': return new Date((data * 1000) + 631065600000);
+        case 'date_time':
+        case 'local_date_time':
+            return new Date((data * 1000) + 631065600000);
         case 'sint32':
-        case 'sint16':
             return data * FIT.scConst;
+        case 'sint16':
         case 'uint32':
         case 'uint16':
             return scale ? data / scale + offset : data;
+        case 'uint16_array':
+            return data.map(dataItem => scale ? dataItem / scale + offset : dataItem);
         default:
-            if (FIT.types[type]) {
+            if (!FIT.types[type]) {
+                return data;
+            }
+            // Quick check for a mask
+            var values = [];
+            for (var key in FIT.types[type]) {
+                if (FIT.types[type].hasOwnProperty(key)) {
+                    values.push(FIT.types[type][key])
+                }
+            }
+            if (values.indexOf('mask') === -1){
                 return FIT.types[type][data];
             }
-            return data;
+            var dataItem = {};
+            for (var key in FIT.types[type]) {
+                if (FIT.types[type].hasOwnProperty(key)) {
+                    if (FIT.types[type][key] === 'mask'){
+                        dataItem.value = data & key
+                    }else{
+                        dataItem[FIT.types[type][key]] = !!((data & key) >> 7) // Not sure if we need the >> 7 and casting to boolean but from all the masked props of fields so far this seems to be the case
+                    }
+                }
+            }
+            return dataItem;
     }
 }
 
 function isInvalidValue(data, type) {
     switch (type) {
-      case 'enum': return data === 0xFF;
-      case 'sint8': return data === 0x7F;
-      case 'uint8': return data === 0xFF;
-      case 'sint16': return data === 0x7FFF;
-      case 'unit16': return data === 0xFFFF;
-      case 'sint32': return data === 0x7FFFFFFF;
-      case 'uint32': return data === 0xFFFFFFFF;
-      case 'string': return data === 0x00;
-      case 'float32': return data === 0xFFFFFFFF;
-      case 'float64': return data === 0xFFFFFFFFFFFFFFFF;
-      case 'uint8z': return data === 0x00;
-      case 'uint16z': return data === 0x0000;
-      case 'uint32z': return data === 0x000000;
-      case 'byte': return data === 0xFF;
-      case 'sint64': return data === 0x7FFFFFFFFFFFFFFF;
-      case 'uint64': return data === 0xFFFFFFFFFFFFFFFF;
-      case 'uint64z': return data === 0x0000000000000000;
-      default: return false;
+        case 'enum':
+            return data === 0xFF;
+        case 'sint8':
+            return data === 0x7F;
+        case 'uint8':
+            return data === 0xFF;
+        case 'sint16':
+            return data === 0x7FFF;
+        case 'uint16':
+            return data === 0xFFFF;
+        case 'sint32':
+            return data === 0x7FFFFFFF;
+        case 'uint32':
+            return data === 0xFFFFFFFF;
+        case 'string':
+            return data === 0x00;
+        case 'float32':
+            return data === 0xFFFFFFFF;
+        case 'float64':
+            return data === 0xFFFFFFFFFFFFFFFF;
+        case 'uint8z':
+            return data === 0x00;
+        case 'uint16z':
+            return data === 0x0000;
+        case 'uint32z':
+            return data === 0x000000;
+        case 'byte':
+            return data === 0xFF;
+        case 'sint64':
+            return data === 0x7FFFFFFFFFFFFFFF;
+        case 'uint64':
+            return data === 0xFFFFFFFFFFFFFFFF;
+        case 'uint64z':
+            return data === 0x0000000000000000;
+        default:
+            return false;
     }
-  }
+}
 
 function convertTo(data, unitsList, speedUnit) {
     const unitObj = FIT.options[unitsList][speedUnit];
@@ -113,29 +202,34 @@ function applyOptions(data, field, options) {
         case 'avg_temperature':
         case 'max_temperature':
             return convertTo(data, 'temperatureUnits', options.temperatureUnit);
-        default: return data;
+        default:
+            return data;
     }
 }
 
-export function readRecord(blob, messageTypes, startIndex, options, startDate) {
+export function readRecord(blob, messageTypes, developerFields, startIndex, options, startDate, pausedTime) {
     const recordHeader = blob[startIndex];
-    const localMessageType = (recordHeader & 15);
+    const localMessageType = recordHeader & 15;
 
     if ((recordHeader & 64) === 64) {
         // is definition message
         // startIndex + 1 is reserved
 
+        const hasDeveloperData = (recordHeader & 32) === 32;
         const lEnd = blob[startIndex + 2] === 0;
+        const numberOfFields = blob[startIndex + 5];
+        const numberOfDeveloperDataFields = hasDeveloperData ? blob[startIndex + 5 + numberOfFields * 3 + 1] : 0;
+
         const mTypeDef = {
             littleEndian: lEnd,
             globalMessageNumber: addEndian(lEnd, [blob[startIndex + 3], blob[startIndex + 4]]),
-            numberOfFields: blob[startIndex + 5],
+            numberOfFields: numberOfFields + numberOfDeveloperDataFields,
             fieldDefs: [],
         };
 
         const message = getFitMessage(mTypeDef.globalMessageNumber);
 
-        for (let i = 0; i < mTypeDef.numberOfFields; i++) {
+        for (let i = 0; i < numberOfFields; i++) {
             const fDefIndex = startIndex + 6 + (i * 3);
             const baseType = blob[fDefIndex + 2];
             const { field, type } = message.getAttributes(blob[fDefIndex]);
@@ -152,21 +246,56 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
 
             mTypeDef.fieldDefs.push(fDef);
         }
+
+        for (let i = 0; i < numberOfDeveloperDataFields; i++) {
+            // If we fail to parse then try catch
+            try {
+                const fDefIndex = startIndex + 6 + (numberOfFields * 3) + 1 + (i * 3);
+
+                const fieldNum = blob[fDefIndex];
+                const size = blob[fDefIndex + 1];
+                const devDataIndex = blob[fDefIndex + 2];
+
+                const devDef = developerFields[devDataIndex][fieldNum];
+
+                const baseType = devDef.fit_base_type_id;
+
+                const fDef = {
+                    type: FIT.types.fit_base_type[baseType],
+                    fDefNo: fieldNum,
+                    size: size,
+                    endianAbility: (baseType & 128) === 128,
+                    littleEndian: lEnd,
+                    baseTypeNo: (baseType & 15),
+                    name: devDef.field_name,
+                    dataType: getFitMessageBaseType(baseType & 15),
+                    scale: devDef.scale || 1,
+                    offset: devDef.offset || 0,
+                    developerDataIndex: devDataIndex,
+                    isDeveloperField: true,
+                };
+
+                mTypeDef.fieldDefs.push(fDef);
+            }catch (e) {
+                if (options.force){
+                    continue;
+                }
+                throw e;
+            }
+        }
+
         messageTypes[localMessageType] = mTypeDef;
 
+        const nextIndex = startIndex + 6 + (mTypeDef.numberOfFields * 3);
+        const nextIndexWithDeveloperData = nextIndex + 1;
+
         return {
-            messageType: 'fieldDescription',
-            nextIndex: startIndex + 6 + (mTypeDef.numberOfFields * 3)
+            messageType: 'definition',
+            nextIndex: hasDeveloperData ? nextIndexWithDeveloperData : nextIndex
         };
     }
 
-    let messageType;
-
-    if (messageTypes[localMessageType]) {
-        messageType = messageTypes[localMessageType];
-    } else {
-        messageType = messageTypes[0];
-    }
+    const messageType = messageTypes[localMessageType] || messageTypes[0];
 
     // TODO: handle compressed header ((recordHeader & 128) == 128)
 
@@ -178,21 +307,38 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
 
     for (let i = 0; i < messageType.fieldDefs.length; i++) {
         const fDef = messageType.fieldDefs[i];
-        const data = readData(blob, fDef, readDataFromIndex);
-        
+        const data = readData(blob, fDef, readDataFromIndex, options);
+
         if (!isInvalidValue(data, fDef.type)) {
-            const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
-            if (field !== 'unknown' && field !== '' && field !== undefined) {
-                fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+            if (fDef.isDeveloperField) {
+
+                const field = fDef.name;
+                const type =  fDef.type;
+                const scale = fDef.scale;
+                const offset = fDef.offset;
+
+                fields[fDef.name] = applyOptions(formatByType(data, type, scale, offset), field, options);
+            } else {
+                const { field, type, scale, offset } = message.getAttributes(fDef.fDefNo);
+
+                if (field !== 'unknown' && field !== '' && field !== undefined) {
+                    fields[field] = applyOptions(formatByType(data, type, scale, offset), field, options);
+                }
             }
 
             if (message.name === 'record' && options.elapsedRecordField) {
                 fields.elapsed_time = (fields.timestamp - startDate) / 1000;
+                fields.timer_time = fields.elapsed_time - pausedTime;
             }
         }
 
         readDataFromIndex += fDef.size;
         messageSize += fDef.size;
+    }
+
+    if (message.name === 'field_description') {
+        developerFields[fields.developer_data_index] = developerFields[fields.developer_data_index] || [];
+        developerFields[fields.developer_data_index][fields.field_definition_number] = fields;
     }
 
     const result = {
@@ -202,11 +348,10 @@ export function readRecord(blob, messageTypes, startIndex, options, startDate) {
     };
 
     return result;
-
 }
 
 export function getArrayBuffer(buffer) {
-    if(buffer instanceof ArrayBuffer) {
+    if (buffer instanceof ArrayBuffer) {
         return buffer;
     }
     const ab = new ArrayBuffer(buffer.length);
