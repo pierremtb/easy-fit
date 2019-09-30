@@ -34,7 +34,7 @@ var FIT = exports.FIT = {
         offset: -273.15
       },
       fahrenheit: {
-        multiplier: 9/5,
+        multiplier: 9 / 5,
         offset: 32
       }
     }
