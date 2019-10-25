@@ -47,24 +47,24 @@ function formatByType(data, type, scale, offset) {
 
 function isInvalidValue(data, type) {
     switch (type) {
-      case 'enum': return data === 0xFF;
-      case 'sint8': return data === 0x7F;
-      case 'uint8': return data === 0xFF;
-      case 'sint16': return data === 0x7FFF;
-      case 'unit16': return data === 0xFFFF;
-      case 'sint32': return data === 0x7FFFFFFF;
-      case 'uint32': return data === 0xFFFFFFFF;
-      case 'string': return data === 0x00;
-      case 'float32': return data === 0xFFFFFFFF;
-      case 'float64': return data === 0xFFFFFFFFFFFFFFFF;
-      case 'uint8z': return data === 0x00;
-      case 'uint16z': return data === 0x0000;
-      case 'uint32z': return data === 0x000000;
-      case 'byte': return data === 0xFF;
-      case 'sint64': return data === 0x7FFFFFFFFFFFFFFF;
-      case 'uint64': return data === 0xFFFFFFFFFFFFFFFF;
-      case 'uint64z': return data === 0x0000000000000000;
-      default: return false;
+        case 'enum': return data === 0xFF;
+        case 'sint8': return data === 0x7F;
+        case 'uint8': return data === 0xFF;
+        case 'sint16': return data === 0x7FFF;
+        case 'uint16': return data === 0xFFFF;
+        case 'sint32': return data === 0x7FFFFFFF;
+        case 'uint32': return data === 0xFFFFFFFF;
+        case 'string': return data === 0x00;
+        case 'float32': return data === 0xFFFFFFFF;
+        case 'float64': return data === 0xFFFFFFFFFFFFFFFF;
+        case 'uint8z': return data === 0x00;
+        case 'uint16z': return data === 0x0000;
+        case 'uint32z': return data === 0x000000;
+        case 'byte': return data === 0xFF;
+        case 'sint64': return data === 0x7FFFFFFFFFFFFFFF;
+        case 'uint64': return data === 0xFFFFFFFFFFFFFFFF;
+        case 'uint64z': return data === 0x0000000000000000;
+        default: return false;
     }
   }
 
