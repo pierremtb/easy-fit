@@ -1,3 +1,5 @@
+NOTE: this lib is currently being rewritten in a [new repository](https://github.com/backfit/backfit).
+
 # easy-fit
 
 > Parse your .FIT files easily, directly from JS.
