@@ -38,6 +38,12 @@ function readData(blob, fDef, startIndex, options) {
                     return dataView.getFloat32(0, fDef.littleEndian);
                 case 'float64':
                     return dataView.getFloat64(0, fDef.littleEndian);
+                case 'uint32_array':
+                    const array32 = [];
+                    for (let i = 0; i < fDef.size; i += 4) {
+                        array32.push(dataView.getUint32(i, fDef.littleEndian));
+                    }
+                    return array32;
                 case 'uint16_array':
                     const array = [];
                     for (let i = 0; i < fDef.size; i += 2) {
@@ -86,6 +92,7 @@ function formatByType(data, type, scale, offset) {
         case 'uint32':
         case 'uint16':
             return scale ? data / scale + offset : data;
+        case 'uint32_array':
         case 'uint16_array':
             return data.map(dataItem => scale ? dataItem / scale + offset : dataItem);
         default:

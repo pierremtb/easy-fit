@@ -50,10 +50,16 @@ function readData(blob, fDef, startIndex, options) {
                     return dataView.getFloat32(0, fDef.littleEndian);
                 case 'float64':
                     return dataView.getFloat64(0, fDef.littleEndian);
+                case 'uint32_array':
+                    var array32 = [];
+                    for (var _i = 0; _i < fDef.size; _i += 4) {
+                        array32.push(dataView.getUint32(_i, fDef.littleEndian));
+                    }
+                    return array32;
                 case 'uint16_array':
                     var array = [];
-                    for (var _i = 0; _i < fDef.size; _i += 2) {
-                        array.push(dataView.getUint16(_i, fDef.littleEndian));
+                    for (var _i2 = 0; _i2 < fDef.size; _i2 += 2) {
+                        array.push(dataView.getUint16(_i2, fDef.littleEndian));
                     }
                     return array;
             }
@@ -68,9 +74,9 @@ function readData(blob, fDef, startIndex, options) {
 
     if (fDef.type === 'string') {
         var _temp = [];
-        for (var _i2 = 0; _i2 < fDef.size; _i2++) {
-            if (blob[startIndex + _i2]) {
-                _temp.push(blob[startIndex + _i2]);
+        for (var _i3 = 0; _i3 < fDef.size; _i3++) {
+            if (blob[startIndex + _i3]) {
+                _temp.push(blob[startIndex + _i3]);
             }
         }
         return new _buffer.Buffer(_temp).toString('utf-8');
@@ -78,8 +84,8 @@ function readData(blob, fDef, startIndex, options) {
 
     if (fDef.type === 'byte_array') {
         var _temp2 = [];
-        for (var _i3 = 0; _i3 < fDef.size; _i3++) {
-            _temp2.push(blob[startIndex + _i3]);
+        for (var _i4 = 0; _i4 < fDef.size; _i4++) {
+            _temp2.push(blob[startIndex + _i4]);
         }
         return _temp2;
     }
@@ -98,6 +104,7 @@ function formatByType(data, type, scale, offset) {
         case 'uint32':
         case 'uint16':
             return scale ? data / scale + offset : data;
+        case 'uint32_array':
         case 'uint16_array':
             return data.map(function (dataItem) {
                 return scale ? dataItem / scale + offset : dataItem;
@@ -265,10 +272,10 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
             mTypeDef.fieldDefs.push(fDef);
         }
 
-        for (var _i4 = 0; _i4 < numberOfDeveloperDataFields; _i4++) {
+        for (var _i5 = 0; _i5 < numberOfDeveloperDataFields; _i5++) {
             // If we fail to parse then try catch
             try {
-                var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i4 * 3;
+                var _fDefIndex = startIndex + 6 + numberOfFields * 3 + 1 + _i5 * 3;
 
                 var fieldNum = blob[_fDefIndex];
                 var size = blob[_fDefIndex + 1];
@@ -323,8 +330,8 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
     var fields = {};
     var message = (0, _messages.getFitMessage)(messageType.globalMessageNumber);
 
-    for (var _i5 = 0; _i5 < messageType.fieldDefs.length; _i5++) {
-        var _fDef2 = messageType.fieldDefs[_i5];
+    for (var _i6 = 0; _i6 < messageType.fieldDefs.length; _i6++) {
+        var _fDef2 = messageType.fieldDefs[_i6];
         var data = readData(blob, _fDef2, readDataFromIndex, options);
 
         if (!isInvalidValue(data, _fDef2.type)) {
