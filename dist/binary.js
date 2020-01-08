@@ -100,6 +100,7 @@ function formatByType(data, type, scale, offset) {
             return new Date(data * 1000 + 631065600000);
         case 'sint32':
             return data * _fit.FIT.scConst;
+        case 'uint8':
         case 'sint16':
         case 'uint32':
         case 'uint16':
