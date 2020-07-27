@@ -76,6 +76,7 @@ export default class FitParser {
     const fieldDescriptions = [];
     const dive_gases = [];
     const course_points = [];
+    const sports = [];
 
     let tempLaps = [];
     let tempRecords = [];
@@ -151,6 +152,9 @@ export default class FitParser {
         case 'course_point':
           course_points.push(message);
           break;
+        case 'sport':
+          sports.push(message);
+          break;
         default:
           if (messageType !== '') {
             fitObj[messageType] = message;
@@ -164,6 +168,10 @@ export default class FitParser {
       fitObj.activity.sessions = sessions;
       fitObj.activity.events = events;
       fitObj.activity.hrv = hrv;
+      fitObj.activity.device_infos = devices;
+      fitObj.activity.developer_data_ids = applications;
+      fitObj.activity.field_descriptions = fieldDescriptions;
+      fitObj.activity.sports = sports;
     }
     if (!isModeCascade) {
       fitObj.sessions = sessions;
@@ -176,6 +184,7 @@ export default class FitParser {
       fitObj.hrv = hrv;
       fitObj.dive_gases = dive_gases;
       fitObj.course_points = course_points;
+      fitObj.sports = sports;
     }
 
     callback(null, fitObj);
