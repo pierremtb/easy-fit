@@ -92,7 +92,6 @@ var FitParser = function () {
       var fieldDescriptions = [];
       var dive_gases = [];
       var course_points = [];
-      var sports = [];
 
       var tempLaps = [];
       var tempRecords = [];
@@ -171,9 +170,6 @@ var FitParser = function () {
           case 'course_point':
             course_points.push(message);
             break;
-          case 'sport':
-            sports.push(message);
-            break;
           default:
             if (messageType !== '') {
               fitObj[messageType] = message;
@@ -187,10 +183,6 @@ var FitParser = function () {
         fitObj.activity.sessions = sessions;
         fitObj.activity.events = events;
         fitObj.activity.hrv = hrv;
-        fitObj.activity.device_infos = devices;
-        fitObj.activity.developer_data_ids = applications;
-        fitObj.activity.field_descriptions = fieldDescriptions;
-        fitObj.activity.sports = sports;
       }
       if (!isModeCascade) {
         fitObj.sessions = sessions;
@@ -203,7 +195,6 @@ var FitParser = function () {
         fitObj.hrv = hrv;
         fitObj.dive_gases = dive_gases;
         fitObj.course_points = course_points;
-        fitObj.sports = sports;
       }
 
       callback(null, fitObj);
