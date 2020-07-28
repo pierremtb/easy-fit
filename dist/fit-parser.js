@@ -242,6 +242,7 @@ var FitParser = function () {
         fitObj.stress = stress;
         fitObj.file_ids = file_ids;
         fitObj.monitor_info = monitor_info;
+        fitObj.definitions = definitions;
       }
 
       callback(null, fitObj);
