@@ -269,6 +269,7 @@ export function readRecord(blob, messageTypes, developerFields, startIndex, opti
             mTypeDef.fieldDefs.push(fDef);
         }
 
+        // numberOfDeveloperDataFields = 0 so it wont crash here and wont loop
         for (let i = 0; i < numberOfDeveloperDataFields; i++) {
             // If we fail to parse then try catch
             try {
