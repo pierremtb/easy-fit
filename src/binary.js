@@ -12,6 +12,12 @@ export function addEndian(littleEndian, bytes) {
     return result;
 }
 
+var timestamp = 0;
+var lastTimeOffset = 0;
+const CompressedTimeMask = 31;
+const CompressedLocalMesgNumMask = 0x60;
+const CompressedHeaderMask = 0x80;
+
 function readData(blob, fDef, startIndex, options) {
     if (fDef.endianAbility === true) {
         const temp = [];
@@ -217,9 +223,17 @@ function applyOptions(data, field, options) {
 
 export function readRecord(blob, messageTypes, developerFields, startIndex, options, startDate, pausedTime) {
     const recordHeader = blob[startIndex];
-    const localMessageType = recordHeader & 15;
+    let localMessageType = recordHeader & 15;
 
-    if ((recordHeader & 64) === 64) {
+    if((recordHeader & CompressedHeaderMask) === CompressedHeaderMask){
+        //compressed timestamp
+
+        var timeoffset = recordHeader & CompressedTimeMask;
+        timestamp += ((timeoffset - lastTimeOffset) & CompressedTimeMask);
+        lastTimeOffset = timeoffset;
+
+        localMessageType = ((recordHeader & CompressedLocalMesgNumMask) >> 5);
+    } else if ((recordHeader & 64) === 64) {
         // is definition message
         // startIndex + 1 is reserved
 
