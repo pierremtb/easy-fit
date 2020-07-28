@@ -83,6 +83,10 @@ export default class FitParser {
     const dive_gases = [];
     const course_points = [];
     const sports = [];
+    const monitors = [];
+    const stress = [];
+    const definitions = [];
+    const file_ids = [];
 
     let tempLaps = [];
     let tempRecords = [];
@@ -161,6 +165,25 @@ export default class FitParser {
         case 'sport':
           sports.push(message);
           break;
+        case 'file_id':
+          if(message){
+            file_ids.push(message);
+          }
+          break;
+        case 'definition':
+          if(message){
+            definitions.push(message);
+          }
+          break;
+        case 'monitoring':
+          monitors.push(message);
+          break;
+        case 'stress_level':
+          stress.push(message);
+          break;
+        case 'software':
+          fitObj.software = message;
+          break;
         default:
           if (messageType !== '') {
             fitObj[messageType] = message;
@@ -191,6 +214,10 @@ export default class FitParser {
       fitObj.dive_gases = dive_gases;
       fitObj.course_points = course_points;
       fitObj.sports = sports;
+      fitObj.devices = devices;
+      fitObj.monitors = monitors;
+      fitObj.stress = stress;
+      fitObj.file_ids = file_ids;
     }
 
     callback(null, fitObj);
