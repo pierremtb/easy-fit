@@ -24,6 +24,14 @@ function addEndian(littleEndian, bytes) {
     return result;
 }
 
+var timestamp = 0;
+var lastTimeOffset = 0;
+var CompressedTimeMask = 31;
+var CompressedLocalMesgNumMask = 0x60;
+var CompressedHeaderMask = 0x80;
+var GarminTimeOffset = 631065600000;
+var monitoring_timestamp = 0;
+
 function readData(blob, fDef, startIndex, options) {
     if (fDef.endianAbility === true) {
         var temp = [];
@@ -97,7 +105,7 @@ function formatByType(data, type, scale, offset) {
     switch (type) {
         case 'date_time':
         case 'local_date_time':
-            return new Date(data * 1000 + 631065600000);
+            return new Date(data * 1000 + GarminTimeOffset);
         case 'sint32':
             return data * _fit.FIT.scConst;
         case 'uint8':
@@ -233,7 +241,15 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
     var recordHeader = blob[startIndex];
     var localMessageType = recordHeader & 15;
 
-    if ((recordHeader & 64) === 64) {
+    if ((recordHeader & CompressedHeaderMask) === CompressedHeaderMask) {
+        //compressed timestamp
+
+        var timeoffset = recordHeader & CompressedTimeMask;
+        timestamp += timeoffset - lastTimeOffset & CompressedTimeMask;
+        lastTimeOffset = timeoffset;
+
+        localMessageType = (recordHeader & CompressedLocalMesgNumMask) >> 5;
+    } else if ((recordHeader & 64) === 64) {
         // is definition message
         // startIndex + 1 is reserved
 
@@ -273,6 +289,7 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
             mTypeDef.fieldDefs.push(fDef);
         }
 
+        // numberOfDeveloperDataFields = 0 so it wont crash here and wont loop
         for (var _i5 = 0; _i5 < numberOfDeveloperDataFields; _i5++) {
             // If we fail to parse then try catch
             try {
@@ -369,6 +386,19 @@ function readRecord(blob, messageTypes, developerFields, startIndex, options, st
     if (message.name === 'field_description') {
         developerFields[fields.developer_data_index] = developerFields[fields.developer_data_index] || [];
         developerFields[fields.developer_data_index][fields.field_definition_number] = fields;
+    }
+
+    if (message.name === 'monitoring') {
+        //we need to keep the raw timestamp value so we can calculate subsequent timestamp16 fields
+        if (fields.timestamp) {
+            monitoring_timestamp = fields.timestamp;
+            fields.timestamp = new Date(fields.timestamp * 1000 + GarminTimeOffset);
+        }
+        if (fields.timestamp16 && !fields.timestamp) {
+            monitoring_timestamp += fields.timestamp16 - (monitoring_timestamp & 0xFFFF) & 0xFFFF;
+            //fields.timestamp = monitoring_timestamp;
+            fields.timestamp = new Date(monitoring_timestamp * 1000 + GarminTimeOffset);
+        }
     }
 
     var result = {
