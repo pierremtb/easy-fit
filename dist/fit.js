@@ -723,6 +723,27 @@ var FIT = exports.FIT = {
       name: 'hrv',
       0: { field: 'time', type: 'uint16_array', scale: 1000, offset: 0, units: 's' }
     },
+    101: {
+      name: 'length',
+      254: { field: 'message_index', type: 'message_index', scale: null, offset: 0, units: '' },
+      253: { field: 'timestamp', type: 'date_time', scale: null, offset: 0, units: 's' },
+      0: { field: 'event', type: 'event', scale: null, offset: 0, units: '' },
+      1: { field: 'event_type', type: 'event_type', scale: null, offset: 0, units: '' },
+      2: { field: 'start_time', type: 'date_time', scale: null, offset: 0, units: '' },
+      3: { field: 'total_elapsed_time', type: 'uint32', scale: 1000, offset: 0, units: 's' },
+      4: { field: 'total_timer_time', type: 'uint32', scale: 1000, offset: 0, units: 's' },
+      5: { field: 'total_strokes', type: 'uint16', scale: null, offset: 0, units: 'strokes' },
+      6: { field: 'avg_speed', type: 'uint16', scale: 1000, offset: 0, units: 'm/s' },
+      7: { field: 'swim_stroke', type: 'swim_stroke', scale: null, offset: 0, units: 'swim_stroke' },
+      9: { field: 'avg_swimming_cadence', type: 'uint8', scale: null, offset: 0, units: 'strokes/min' },
+      10: { field: 'event_group', type: 'uint8', scale: null, offset: 0, units: '' },
+      11: { field: 'total_calories', type: 'uint16', scale: null, offset: 0, units: 'kcal' },
+      12: { field: 'length_type', type: 'length_type', scale: null, offset: 0, units: 'length_type' },
+      18: { field: 'player_score', type: 'uint16', scale: null, offset: 0, units: '' },
+      19: { field: 'opponent_score', type: 'uint16', scale: null, offset: 0, units: '' },
+      20: { field: 'stroke_count', type: 'uint16', scale: null, offset: 0, units: 'counts' },
+      21: { field: 'zone_count', type: 'uint16', scale: null, offset: 0, units: 'counts' }
+    },
     103: {
       name: 'monitoring_info',
       253: { field: 'timestamp', type: 'date_time', scale: null, offset: 0, units: '' },

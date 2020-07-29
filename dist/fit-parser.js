@@ -104,8 +104,10 @@ var FitParser = function () {
       var definitions = [];
       var file_ids = [];
       var monitor_info = [];
+      var lengths = [];
 
       var tempLaps = [];
+      var tempLengths = [];
       var tempRecords = [];
 
       var loopIndex = headerLength;
@@ -133,6 +135,8 @@ var FitParser = function () {
               message.records = tempRecords;
               tempRecords = [];
               tempLaps.push(message);
+              message.lengths = tempLengths;
+              tempLengths = [];
             }
             laps.push(message);
             break;
@@ -152,6 +156,12 @@ var FitParser = function () {
               }
             }
             events.push(message);
+            break;
+          case 'length':
+            if (isCascadeNeeded) {
+              tempLengths.push(message);
+            }
+            lengths.push(message);
             break;
           case 'hrv':
             hrv.push(message);
@@ -228,6 +238,7 @@ var FitParser = function () {
       if (!isModeCascade) {
         fitObj.sessions = sessions;
         fitObj.laps = laps;
+        fitObj.lengths = lengths;
         fitObj.records = records;
         fitObj.events = events;
         fitObj.device_infos = devices;

@@ -88,8 +88,10 @@ export default class FitParser {
     const definitions = [];
     const file_ids = [];
     const monitor_info = [];
+    const lengths = [];
 
     let tempLaps = [];
+    let tempLengths = [];
     let tempRecords = [];
 
     let loopIndex = headerLength;
@@ -114,6 +116,8 @@ export default class FitParser {
             message.records = tempRecords;
             tempRecords = [];
             tempLaps.push(message);
+            message.lengths = tempLengths;
+            tempLengths = [];
           }
           laps.push(message);
           break;
@@ -133,6 +137,12 @@ export default class FitParser {
             }
           }
           events.push(message);
+          break;
+        case 'length':
+          if (isCascadeNeeded) {
+            tempLengths.push(message);
+          }
+          lengths.push(message);
           break;
         case 'hrv':
           hrv.push(message);
@@ -209,6 +219,7 @@ export default class FitParser {
     if (!isModeCascade) {
       fitObj.sessions = sessions;
       fitObj.laps = laps;
+      fitObj.lengths = lengths;
       fitObj.records = records;
       fitObj.events = events;
       fitObj.device_infos = devices;
