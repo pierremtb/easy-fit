@@ -65,7 +65,7 @@ export const FIT = {
       0: { field: 'type', type: 'file', scale: null, offset: '', units: '' },
       1: { field: 'manufacturer', type: 'manufacturer', scale: null, offset: '', units: '' },
       2: { field: 'product', type: 'uint16', scale: null, offset: '', units: '' },
-      3: { field: 'device_id', type: 'uint32z', scale: null, offset: '', units: '' },
+      3: { field: 'serial_number', type: 'uint32z', scale: null, offset: '', units: '' },
       4: { field: 'time_created', type: 'date_time', scale: null, offset: '', units: '' },
       5: { field: 'number', type: 'uint16', scale: null, offset: '', units: '' },
       8: { field: 'product_name', type: 'string', scale: null, offset: '', units: '' },
