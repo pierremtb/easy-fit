@@ -408,13 +408,13 @@ export function calculateCRC(blob, start, end) {
 
     let crc = 0;
     for (let i = start; i < end; i++) {
-        const byte = blob[i];
+        const byteVal = blob[i];
         let tmp = crcTable[crc & 0xF];
         crc = (crc >> 4) & 0x0FFF;
-        crc = crc ^ tmp ^ crcTable[byte & 0xF];
+        crc = crc ^ tmp ^ crcTable[byteVal & 0xF];
         tmp = crcTable[crc & 0xF];
         crc = (crc >> 4) & 0x0FFF;
-        crc = crc ^ tmp ^ crcTable[(byte >> 4) & 0xF];
+        crc = crc ^ tmp ^ crcTable[(byteVal >> 4) & 0xF];
     }
 
     return crc;
