@@ -1,6 +1,6 @@
 import { FIT } from './fit';
 import { getFitMessage, getFitMessageBaseType } from './messages';
-import { Buffer } from 'buffer/';
+import { Buffer } from 'buffer';
 
 export function addEndian(littleEndian, bytes) {
     let result = 0;
@@ -75,7 +75,7 @@ function readData(blob, fDef, startIndex, options) {
                 temp.push(blob[startIndex + i]);
             }
         }
-        return new Buffer(temp).toString('utf-8');
+        return new Buffer.from(temp).toString('utf-8');
     }
 
     if (fDef.type === 'byte_array') {
