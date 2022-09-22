@@ -59,5 +59,8 @@
     "example": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit",
     "test": "node_modules/gulp/bin/gulp.js;"
   },
-  "version": "0.0.8"
+  "version": "0.0.8",
+  "overrides": {
+    "graceful-fs": "^4.2.10"
+  }
 }

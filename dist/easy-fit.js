@@ -8,6 +8,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _binary = require('./binary');
 
+var _binaryEncode = require('./binary-encode');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var EasyFit = function () {
@@ -26,7 +28,90 @@ var EasyFit = function () {
     };
   }
 
+  /*
+  {
+  "file_id": {
+    "serial_number": 3867897489,
+    "time_created": "2015-10-12T14:47:44.000Z",
+    "manufacturer": "garmin",
+    "product": 1561,
+    "number": 65535,
+    "type": "activity"
+  },
+  "weight_scales": [{
+      timestamp: 1021032143,
+      weight: 85.3,
+      percent_fat: 14.1,
+      bone_mass: 3.7,
+      muscle_mass: 71.4,
+      metabolic_age: 28
+    }
+  ]
+  }
+  */
+
   _createClass(EasyFit, [{
+    key: 'encode',
+    value: function encode(fitObj) {
+
+      //encode data first, to determine size
+      var chunks = (0, _binaryEncode.encodeFile)(fitObj);
+      var dataSize = chunks.reduce(function (acc, val) {
+        return acc + val.byteLength;
+      }, 0);
+      var headerLength = 12;
+
+      var buf = new ArrayBuffer(headerLength + dataSize + 2); //CRC is length 2
+
+      //write header
+      var header = new DataView(buf, 0, headerLength);
+      header.setUint8(0, headerLength, true); //header length
+      header.setUint8(1, 0x10, true); //protocol version
+      header.setUint16(2, 108, true); //profile version
+      header.setUint32(4, dataSize, true); //data length
+
+      var fileTypeString = '.FIT';
+      for (var i = 0; i < 4; i++) {
+        header.setInt8(i + 8, fileTypeString.charCodeAt(i));
+      }
+
+      //write data
+      var pos = headerLength;
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = chunks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var chunk = _step.value;
+
+          new Uint8Array(buf, pos, chunk.byteLength).set(new Uint8Array(chunk));
+          pos += chunk.byteLength;
+        }
+
+        //write crc
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      var fileCRC = (0, _binary.calculateCRC)(new Uint8Array(buf), 0, pos);
+      new DataView(buf, pos, 2).setUint16(0, fileCRC, true);
+
+      return buf;
+    }
+  }, {
     key: 'parse',
     value: function parse(content, callback) {
       var blob = new Uint8Array((0, _binary.getArrayBuffer)(content));

@@ -1,4 +1,5 @@
 import { getArrayBuffer, calculateCRC, readRecord } from './binary';
+import { encodeFile, encodeRecordGroup } from './binary-encode';
 
 export default class EasyFit {
   constructor(options = {}) {
@@ -8,8 +9,66 @@ export default class EasyFit {
       lengthUnit: options.lengthUnit || 'm',
       temperatureUnit: options.temperatureUnit || 'celsius',
       elapsedRecordField: options.elapsedRecordField || false,
-      mode: options.mode || 'list',
+      mode: options.mode || 'list'
     };
+  }
+
+  /*
+{
+  "file_id": {
+    "serial_number": 3867897489,
+    "time_created": "2015-10-12T14:47:44.000Z",
+    "manufacturer": "garmin",
+    "product": 1561,
+    "number": 65535,
+    "type": "activity"
+  },
+  "weight_scales": [{
+      timestamp: 1021032143,
+      weight: 85.3,
+      percent_fat: 14.1,
+      bone_mass: 3.7,
+      muscle_mass: 71.4,
+      metabolic_age: 28
+    }
+  ]
+}
+  */
+
+  encode(fitObj) {
+
+    //encode data first, to determine size
+    let chunks = encodeFile(fitObj)
+    let dataSize = chunks.reduce((acc, val) => acc + val.byteLength, 0)
+    let headerLength = 12;
+
+    const buf = new ArrayBuffer(headerLength + dataSize + 2); //CRC is length 2
+
+    //write header
+    const header = new DataView(buf, 0, headerLength)
+    header.setUint8(0, headerLength, true); //header length
+    header.setUint8(1, 0x10, true); //protocol version
+    header.setUint16(2, 108, true); //profile version
+    header.setUint32(4, dataSize, true); //data length
+
+    let fileTypeString = '.FIT';
+    for (let i = 0; i < 4; i++) {
+      header.setInt8(i + 8, fileTypeString.charCodeAt(i));
+    }
+
+    //write data
+    let pos = headerLength;
+
+    for(let chunk of chunks) {
+      new Uint8Array(buf, pos, chunk.byteLength).set(new Uint8Array(chunk));
+      pos += chunk.byteLength;
+    }
+
+    //write crc
+    let fileCRC = calculateCRC(new Uint8Array(buf), 0, pos);
+    new DataView(buf, pos, 2).setUint16(0, fileCRC, true);
+
+    return buf;
   }
 
   parse(content, callback) {

@@ -47,6 +47,24 @@ fs.readFile('./example.fit', function (err, content) {
   });
   
 });
+
+// Write a .FIT file
+var fs = require('fs');
+fs.writeFile('./example.fit', Buffer.from(easyFit.encode({
+    "file_id": {
+    "time_created": new Date(),
+    "type": "weight",
+  },
+  "weight_scales": [{
+      timestamp: new Date(),
+      weight: 87.3,
+      percent_fat: 17,
+      bone_mass: 3.6,
+      muscle_mass: 68.9,
+      metabolic_age: 28,
+    }
+  ]
+})), 'binary');
 ```
 
 ## API Documentation

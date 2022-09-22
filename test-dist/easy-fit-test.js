@@ -26,6 +26,7 @@ describe('easyfit tests', function () {
                 }
                 (0, _chai.expect)(fitObject).to.be.a('object');
                 (0, _chai.expect)(fitObject).to.have.property('sessions');
+                easyFit.encode(fitObject);
                 done();
             });
         });
@@ -49,8 +50,43 @@ describe('easyfit tests', function () {
                     return l > 180 || l < -180;
                 })).to.be.empty;
 
+                easyFit.encode(fitObject);
                 done();
             });
+        });
+    });
+
+    it('expects to create a FIT weight stream', function (done) {
+        this.timeout(5000);
+        var easyFit = new _easyFit2.default({ force: true });
+
+        var buffer = easyFit.encode({
+            "file_id": {
+                "time_created": new Date(),
+                "type": "weight"
+            },
+            "weight_scales": [{
+                timestamp: new Date(),
+                weight: 87.3,
+                percent_fat: 17,
+                bone_mass: 3.6,
+                muscle_mass: 68.9,
+                metabolic_age: 28
+            }]
+        });
+
+        easyFit.parse(buffer, function (fitError, fitObject) {
+            if (fitError) {
+                throw "Error parsing";
+            }
+            (0, _chai.expect)(fitObject).to.have.property('records');
+            (0, _chai.expect)(fitObject.records.map(function (r) {
+                return r.position_long;
+            }).filter(function (l) {
+                return l > 180 || l < -180;
+            })).to.be.empty;
+
+            done();
         });
     });
 });
