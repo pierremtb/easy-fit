@@ -63,7 +63,6 @@ function baseTypeAndSizeByName(typeName, values) {
     var size = 0;
 
     switch (typeName) {
-        case 'enum':
         case 'sint8':
         case 'uint8':
         case 'uint8z':
@@ -155,7 +154,14 @@ function nativeType(type) {
             return "uint32";
         default:
             if (_fit.FIT.types[type]) {
-                return "enum";
+                //if there are keys > 255, we need 2 bytes
+                if (Object.keys(_fit.FIT.types[type]).reduce(function (acc, v) {
+                    return Math.max(acc, v);
+                }, 0) > 255) {
+                    return "uint16";
+                } else {
+                    return "uint8";
+                }
             }
             return type;
     }
@@ -219,7 +225,6 @@ function writeNative(typeName, value, view) {
         case 'uint8':
         case 'uint8z':
         case 'byte':
-        case 'enum':
             view.setUint8(offset, value, true);
             break;
         case 'sint16':
