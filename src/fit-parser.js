@@ -97,7 +97,8 @@ export default class FitParser {
     const isModeCascade = this.options.mode === 'cascade';
     const isCascadeNeeded = isModeCascade || this.options.mode === 'both';
 
-    let startDate, lastStopTimestamp;
+    let startDate;
+    let lastStopTimestamp;
     let pausedTime = 0;
 
     while (loopIndex < crcStart) {
@@ -156,12 +157,12 @@ export default class FitParser {
           sports.push(message);
           break;
         case 'file_id':
-          if(message){
+          if (message) {
             file_ids.push(message);
           }
           break;
         case 'definition':
-          if(message){
+          if (message) {
             definitions.push(message);
           }
           break;

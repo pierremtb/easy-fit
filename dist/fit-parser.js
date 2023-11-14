@@ -115,8 +115,8 @@ var FitParser = function () {
       var isModeCascade = this.options.mode === 'cascade';
       var isCascadeNeeded = isModeCascade || this.options.mode === 'both';
 
-      var startDate = void 0,
-          lastStopTimestamp = void 0;
+      var startDate = void 0;
+      var lastStopTimestamp = void 0;
       var pausedTime = 0;
 
       while (loopIndex < crcStart) {

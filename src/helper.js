@@ -8,9 +8,10 @@ export const mapDataIntoLap = (inputLaps, lapKey, data) => {
     for (let j = index; j < data.length; j++) {
       const row = data[j];
       if (nextLap) {
-        if (lap.start_time <= row.timestamp && nextLap.start_time >= row.timestamp) {
+        if (lap.start_time <= row.timestamp.toISOString() && nextLap.start_time > row.timestamp.toISOString()) {
           tempData.push(row);
-        } else if (nextLap.start_time <= row.timestamp || data[j + 1]) {
+        } else if (nextLap.start_time <= row.timestamp) {
+          tempData.push(row);
           laps[i][lapKey] = tempData;
           index = j;
           break;
@@ -19,6 +20,7 @@ export const mapDataIntoLap = (inputLaps, lapKey, data) => {
         tempData.push(row);
       }
     }
+
     if (!laps[i][lapKey]) {
       laps[i][lapKey] = tempData;
     }
@@ -40,9 +42,10 @@ export const mapDataIntoSession = (inputSessions, inputLaps, lengths, records) =
     for (let j = lapIndex; j < laps.length; j++) {
       const lap = laps[j];
       if (nextSession) {
-        if (session.timestamp <= lap.timestamp && nextSession.timestamp >= lap.timestamp) {
+        if (session.start_time <= lap.start_time && nextSession.start_time > lap.start_time) {
           tempLaps.push(lap);
-        } else if (nextSession.timestamp <= length.timestamp) {
+        } else if (nextSession.start_time <= lap.start_time) {
+          tempLaps.push(lap);
           sessions[i].laps = tempLaps;
           lapIndex = i;
           break;
@@ -52,7 +55,7 @@ export const mapDataIntoSession = (inputSessions, inputLaps, lengths, records) =
       }
     }
 
-    if (!nextSession) {
+    if (!sessions[i].laps) {
       sessions[i].laps = tempLaps;
     }
   }
