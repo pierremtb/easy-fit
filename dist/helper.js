@@ -13,10 +13,9 @@ var mapDataIntoLap = exports.mapDataIntoLap = function mapDataIntoLap(inputLaps,
     for (var j = index; j < data.length; j++) {
       var row = data[j];
       if (nextLap) {
-        if (lap.start_time <= row.timestamp.toISOString() && nextLap.start_time > row.timestamp.toISOString()) {
+        if (lap.start_time <= row.timestamp.toISOString() && nextLap.start_time >= row.timestamp.toISOString()) {
           tempData.push(row);
-        } else if (nextLap.start_time <= row.timestamp) {
-          tempData.push(row);
+        } else if (nextLap.start_time < row.timestamp.toISOString()) {
           laps[i][lapKey] = tempData;
           index = j;
           break;
@@ -47,12 +46,11 @@ var mapDataIntoSession = exports.mapDataIntoSession = function mapDataIntoSessio
     for (var j = lapIndex; j < laps.length; j++) {
       var lap = laps[j];
       if (nextSession) {
-        if (session.start_time <= lap.start_time && nextSession.start_time > lap.start_time) {
+        if (session.start_time <= lap.start_time && nextSession.start_time >= lap.start_time) {
           tempLaps.push(lap);
-        } else if (nextSession.start_time <= lap.start_time) {
-          tempLaps.push(lap);
+        } else if (nextSession.start_time < lap.start_time) {
           sessions[i].laps = tempLaps;
-          lapIndex = i;
+          lapIndex = j;
           break;
         }
       } else {
