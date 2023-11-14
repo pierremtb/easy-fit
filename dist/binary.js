@@ -12,7 +12,7 @@ var _fit = require('./fit');
 
 var _messages = require('./messages');
 
-var _buffer = require('buffer/');
+var _buffer = require('buffer');
 
 function addEndian(littleEndian, bytes) {
     var result = 0;
@@ -87,7 +87,7 @@ function readData(blob, fDef, startIndex, options) {
                 _temp.push(blob[startIndex + _i3]);
             }
         }
-        return new _buffer.Buffer(_temp).toString('utf-8');
+        return new _buffer.Buffer.from(_temp).toString('utf-8');
     }
 
     if (fDef.type === 'byte_array') {
@@ -427,13 +427,13 @@ function calculateCRC(blob, start, end) {
 
     var crc = 0;
     for (var i = start; i < end; i++) {
-        var byte = blob[i];
+        var byteVal = blob[i];
         var tmp = crcTable[crc & 0xF];
         crc = crc >> 4 & 0x0FFF;
-        crc = crc ^ tmp ^ crcTable[byte & 0xF];
+        crc = crc ^ tmp ^ crcTable[byteVal & 0xF];
         tmp = crcTable[crc & 0xF];
         crc = crc >> 4 & 0x0FFF;
-        crc = crc ^ tmp ^ crcTable[byte >> 4 & 0xF];
+        crc = crc ^ tmp ^ crcTable[byteVal >> 4 & 0xF];
     }
 
     return crc;

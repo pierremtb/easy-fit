@@ -8,6 +8,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _binary = require('./binary');
 
+var _helper = require('./helper');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var FitParser = function () {
@@ -106,10 +108,6 @@ var FitParser = function () {
       var monitor_info = [];
       var lengths = [];
 
-      var tempLaps = [];
-      var tempLengths = [];
-      var tempRecords = [];
-
       var loopIndex = headerLength;
       var messageTypes = [];
       var developerFields = [];
@@ -131,20 +129,9 @@ var FitParser = function () {
 
         switch (messageType) {
           case 'lap':
-            if (isCascadeNeeded) {
-              message.records = tempRecords;
-              tempRecords = [];
-              tempLaps.push(message);
-              message.lengths = tempLengths;
-              tempLengths = [];
-            }
             laps.push(message);
             break;
           case 'session':
-            if (isCascadeNeeded) {
-              message.laps = tempLaps;
-              tempLaps = [];
-            }
             sessions.push(message);
             break;
           case 'event':
@@ -158,9 +145,6 @@ var FitParser = function () {
             events.push(message);
             break;
           case 'length':
-            if (isCascadeNeeded) {
-              tempLengths.push(message);
-            }
             lengths.push(message);
             break;
           case 'hrv':
@@ -173,9 +157,6 @@ var FitParser = function () {
               message.timer_time = 0;
             }
             records.push(message);
-            if (isCascadeNeeded) {
-              tempRecords.push(message);
-            }
             break;
           case 'field_description':
             fieldDescriptions.push(message);
@@ -227,7 +208,7 @@ var FitParser = function () {
 
       if (isCascadeNeeded) {
         fitObj.activity = fitObj.activity || {};
-        fitObj.activity.sessions = sessions;
+        fitObj.activity.sessions = (0, _helper.mapDataIntoSession)(sessions, laps, lengths, records);
         fitObj.activity.events = events;
         fitObj.activity.hrv = hrv;
         fitObj.activity.device_infos = devices;
