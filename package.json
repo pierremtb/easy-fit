@@ -9,6 +9,10 @@
     {
       "email": "jimmykane9@gmail.com",
       "name": "Dimitrios Kanellopoulos"
+    },
+    {
+      "email": "gie68i@gmail.com",
+      "name": "Wasa Choksuwattanasakul"
     }
   ],
   "description": "Parse your .FIT files easily, directly from JS (Garmin, Polar, Suunto)",
