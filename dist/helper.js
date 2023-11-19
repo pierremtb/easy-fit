@@ -10,12 +10,15 @@ var mapDataIntoLap = exports.mapDataIntoLap = function mapDataIntoLap(inputLaps,
     var lap = laps[i];
     var nextLap = laps[i + 1];
     var tempData = [];
+    var lapStartTime = new Date(lap.startTime).getTime();
+    var nextLapStartTime = nextLap ? new Date(nextLap.start_time).getTime() : null;
     for (var j = index; j < data.length; j++) {
       var row = data[j];
       if (nextLap) {
-        if (lap.start_time <= row.timestamp.toISOString() && nextLap.start_time >= row.timestamp.toISOString()) {
+        var timestamp = new Date(row.timestamp).getTime();
+        if (lapStartTime <= timestamp && nextLapStartTime >= timestamp) {
           tempData.push(row);
-        } else if (nextLap.start_time < row.timestamp.toISOString()) {
+        } else if (nextLapStartTime < timestamp) {
           laps[i][lapKey] = tempData;
           index = j;
           break;
@@ -43,12 +46,15 @@ var mapDataIntoSession = exports.mapDataIntoSession = function mapDataIntoSessio
     var session = sessions[i];
     var nextSession = sessions[i + 1];
     var tempLaps = [];
+    var sessionStartTime = new Date(session.start_time).getTime();
+    var nextSessionStartTime = nextSession ? new Date(nextSession.start_time).getTime() : null;
     for (var j = lapIndex; j < laps.length; j++) {
       var lap = laps[j];
       if (nextSession) {
-        if (session.start_time <= lap.start_time && nextSession.start_time >= lap.start_time) {
+        var lapStartTime = new Date(lap.start_time).getTime();
+        if (sessionStartTime <= lapStartTime && nextSessionStartTime >= lapStartTime) {
           tempLaps.push(lap);
-        } else if (nextSession.start_time < lap.start_time) {
+        } else if (nextSessionStartTime < lapStartTime) {
           sessions[i].laps = tempLaps;
           lapIndex = j;
           break;
