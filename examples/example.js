@@ -10,7 +10,7 @@ fs.readFile(file, function (err, content) {
     lengthUnit: 'm',
     temperatureUnit: 'celsius',
     elapsedRecordField: true,
-    mode: 'list',
+    mode: 'both',
   });
 
   fitParser.parse(content, function (error, data) {

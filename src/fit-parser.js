@@ -1,5 +1,5 @@
 import { getArrayBuffer, calculateCRC, readRecord } from './binary';
-
+import { mapDataIntoSession } from './helper';
 export default class FitParser {
   constructor(options = {}) {
     this.options = {
@@ -90,10 +90,6 @@ export default class FitParser {
     const monitor_info = [];
     const lengths = [];
 
-    let tempLaps = [];
-    let tempLengths = [];
-    let tempRecords = [];
-
     let loopIndex = headerLength;
     const messageTypes = [];
     const developerFields = [];
@@ -101,7 +97,8 @@ export default class FitParser {
     const isModeCascade = this.options.mode === 'cascade';
     const isCascadeNeeded = isModeCascade || this.options.mode === 'both';
 
-    let startDate, lastStopTimestamp;
+    let startDate;
+    let lastStopTimestamp;
     let pausedTime = 0;
 
     while (loopIndex < crcStart) {
@@ -112,20 +109,9 @@ export default class FitParser {
 
       switch (messageType) {
         case 'lap':
-          if (isCascadeNeeded) {
-            message.records = tempRecords;
-            tempRecords = [];
-            tempLaps.push(message);
-            message.lengths = tempLengths;
-            tempLengths = [];
-          }
           laps.push(message);
           break;
         case 'session':
-          if (isCascadeNeeded) {
-            message.laps = tempLaps;
-            tempLaps = [];
-          }
           sessions.push(message);
           break;
         case 'event':
@@ -139,9 +125,6 @@ export default class FitParser {
           events.push(message);
           break;
         case 'length':
-          if (isCascadeNeeded) {
-            tempLengths.push(message);
-          }
           lengths.push(message);
           break;
         case 'hrv':
@@ -154,9 +137,6 @@ export default class FitParser {
             message.timer_time = 0;
           }
           records.push(message);
-          if (isCascadeNeeded) {
-            tempRecords.push(message);
-          }
           break;
         case 'field_description':
           fieldDescriptions.push(message);
@@ -177,12 +157,12 @@ export default class FitParser {
           sports.push(message);
           break;
         case 'file_id':
-          if(message){
+          if (message) {
             file_ids.push(message);
           }
           break;
         case 'definition':
-          if(message){
+          if (message) {
             definitions.push(message);
           }
           break;
@@ -208,7 +188,7 @@ export default class FitParser {
 
     if (isCascadeNeeded) {
       fitObj.activity = fitObj.activity || {};
-      fitObj.activity.sessions = sessions;
+      fitObj.activity.sessions = mapDataIntoSession(sessions, laps, lengths, records);
       fitObj.activity.events = events;
       fitObj.activity.hrv = hrv;
       fitObj.activity.device_infos = devices;

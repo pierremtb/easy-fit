@@ -1257,7 +1257,7 @@ var FIT = exports.FIT = {
       40: 'latvian_grid',
       41: 'swedish_ref_99_grid'
     },
-    switch: {
+    'switch': {
       0: 'off',
       1: 'on',
       2: 'auto'

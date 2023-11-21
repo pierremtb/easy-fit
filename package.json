@@ -9,6 +9,10 @@
     {
       "email": "jimmykane9@gmail.com",
       "name": "Dimitrios Kanellopoulos"
+    },
+    {
+      "email": "gie68i@gmail.com",
+      "name": "Wasa Choksuwattanasakul"
     }
   ],
   "description": "Parse your .FIT files easily, directly from JS (Garmin, Polar, Suunto)",
@@ -61,7 +65,9 @@
   },
   "scripts": {
     "example-output": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit > examples/output.json",
-    "example": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/example.fit",
+    "example-output-summary-first": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/triathlon_summary_first.fit > examples/output_summary_first.json",
+    "example-output-summary-last": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/triathlon_summary_last.fit > examples/output_summary_last.json",
+    "example": "node_modules/gulp/bin/gulp.js; node examples/example.js examples/triathlon_summary_first.fit",
     "test": "node_modules/gulp/bin/gulp.js;",
     "build": "node_modules/gulp/bin/gulp.js babel"
   },
