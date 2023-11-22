@@ -3,8 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var mapDataIntoLap = exports.mapDataIntoLap = function mapDataIntoLap(inputLaps, lapKey, data) {
-  var laps = JSON.parse(JSON.stringify(inputLaps));
+  var laps = [].concat(_toConsumableArray(inputLaps));
   var index = 0;
   for (var i = 0; i < laps.length; i++) {
     var lap = laps[i];
@@ -36,7 +39,7 @@ var mapDataIntoLap = exports.mapDataIntoLap = function mapDataIntoLap(inputLaps,
 };
 
 var mapDataIntoSession = exports.mapDataIntoSession = function mapDataIntoSession(inputSessions, laps) {
-  var sessions = JSON.parse(JSON.stringify(inputSessions));
+  var sessions = [].concat(_toConsumableArray(inputSessions));
   var lapIndex = 0;
   for (var i = 0; i < sessions.length; i++) {
     var session = sessions[i];

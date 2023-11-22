@@ -1,5 +1,5 @@
 export const mapDataIntoLap = (inputLaps, lapKey, data) => {
-  const laps = JSON.parse(JSON.stringify(inputLaps));
+  const laps = [...inputLaps];
   let index = 0;
   for (let i = 0; i < laps.length; i++) {
     const lap = laps[i];
@@ -31,7 +31,7 @@ export const mapDataIntoLap = (inputLaps, lapKey, data) => {
 };
 
 export const mapDataIntoSession = (inputSessions, laps) => {
-  const sessions = JSON.parse(JSON.stringify(inputSessions));
+  const sessions = [...inputSessions];
   let lapIndex = 0;
   for (let i = 0; i < sessions.length; i++) {
     const session = sessions[i];
