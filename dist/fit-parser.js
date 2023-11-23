@@ -208,7 +208,10 @@ var FitParser = function () {
 
       if (isCascadeNeeded) {
         fitObj.activity = fitObj.activity || {};
-        fitObj.activity.sessions = (0, _helper.mapDataIntoSession)(sessions, laps, lengths, records);
+        laps = (0, _helper.mapDataIntoLap)(laps, 'records', records);
+        laps = (0, _helper.mapDataIntoLap)(laps, 'lengths', lengths);
+        sessions = (0, _helper.mapDataIntoSession)(sessions, laps);
+        fitObj.activity.sessions = sessions;
         fitObj.activity.events = events;
         fitObj.activity.hrv = hrv;
         fitObj.activity.device_infos = devices;

@@ -1,20 +1,19 @@
 export const mapDataIntoLap = (inputLaps, lapKey, data) => {
-  const laps = JSON.parse(JSON.stringify(inputLaps));
+  const laps = [...inputLaps];
   let index = 0;
   for (let i = 0; i < laps.length; i++) {
     const lap = laps[i];
     const nextLap = laps[i + 1];
     const tempData = [];
-    const lapStartTime = new Date(lap.startTime).getTime();
+    const lapStartTime = new Date(lap.start_time).getTime();
     const nextLapStartTime = nextLap ? new Date(nextLap.start_time).getTime() : null;
     for (let j = index; j < data.length; j++) {
       const row = data[j];
       if (nextLap) {
         const timestamp = new Date(row.timestamp).getTime();
-        if (lapStartTime <= timestamp && nextLapStartTime >= timestamp) {
+        if (lapStartTime <= timestamp && nextLapStartTime > timestamp) {
           tempData.push(row);
-        } else if (nextLapStartTime < timestamp) {
-          laps[i][lapKey] = tempData;
+        } else if (nextLapStartTime <= timestamp) {
           index = j;
           break;
         }
@@ -31,11 +30,8 @@ export const mapDataIntoLap = (inputLaps, lapKey, data) => {
   return laps;
 };
 
-export const mapDataIntoSession = (inputSessions, inputLaps, lengths, records) => {
-  const sessions = JSON.parse(JSON.stringify(inputSessions));
-  let laps = JSON.parse(JSON.stringify(inputLaps));
-  laps = mapDataIntoLap(laps, 'lengths', lengths);
-  laps = mapDataIntoLap(laps, 'records', records);
+export const mapDataIntoSession = (inputSessions, laps) => {
+  const sessions = [...inputSessions];
   let lapIndex = 0;
   for (let i = 0; i < sessions.length; i++) {
     const session = sessions[i];
@@ -47,10 +43,9 @@ export const mapDataIntoSession = (inputSessions, inputLaps, lengths, records) =
       const lap = laps[j];
       if (nextSession) {
         const lapStartTime = new Date(lap.start_time).getTime();
-        if (sessionStartTime <= lapStartTime && nextSessionStartTime >= lapStartTime) {
+        if (sessionStartTime <= lapStartTime && nextSessionStartTime > lapStartTime) {
           tempLaps.push(lap);
-        } else if (nextSessionStartTime < lapStartTime) {
-          sessions[i].laps = tempLaps;
+        } else if (nextSessionStartTime <= lapStartTime) {
           lapIndex = j;
           break;
         }

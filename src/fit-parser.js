@@ -1,5 +1,5 @@
 import { getArrayBuffer, calculateCRC, readRecord } from './binary';
-import { mapDataIntoSession } from './helper';
+import { mapDataIntoSession, mapDataIntoLap } from './helper';
 export default class FitParser {
   constructor(options = {}) {
     this.options = {
@@ -72,8 +72,8 @@ export default class FitParser {
     fitObj.protocolVersion = protocolVersion;
     fitObj.profileVersion = profileVersion;
 
-    const sessions = [];
-    const laps = [];
+    let sessions = [];
+    let laps = [];
     const records = [];
     const events = [];
     const hrv = [];
@@ -188,7 +188,10 @@ export default class FitParser {
 
     if (isCascadeNeeded) {
       fitObj.activity = fitObj.activity || {};
-      fitObj.activity.sessions = mapDataIntoSession(sessions, laps, lengths, records);
+      laps = mapDataIntoLap(laps, 'records', records);
+      laps = mapDataIntoLap(laps, 'lengths', lengths);
+      sessions = mapDataIntoSession(sessions, laps);
+      fitObj.activity.sessions = sessions;
       fitObj.activity.events = events;
       fitObj.activity.hrv = hrv;
       fitObj.activity.device_infos = devices;
